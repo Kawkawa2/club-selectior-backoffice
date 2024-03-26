@@ -1,0 +1,15 @@
+/* Logo-removebg-preview 1 */
+#logo{
+    background: url(../public/assets/Logo-removebg-preview\ .png);
+    background-size: 15vw;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+@media (max-width: 768px) {
+    #logo{
+        background: url(../public/assets/Logo-removebg-preview\ .png);
+        background-size: 45vw;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+  }
