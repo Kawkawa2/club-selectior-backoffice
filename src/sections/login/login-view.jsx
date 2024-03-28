@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import {FormHelperText }  from '@mui/material';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -10,6 +11,8 @@ import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
+
+import { setUser } from 'src/utils/helper';
 
 import Api  from 'src/services/api';
 import { bgGradient } from 'src/theme/css';
@@ -25,53 +28,91 @@ export default function LoginView() {
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors]=useState({
+    email:'',
+    password:'',
+  });
   const api = new Api();
 
-  const [showPassword, setShowPassword] = useState(false);
+  function validateForm() {
+    let valid = true;
 
-
-  const handleClick = () => {
+    if (!email.trim()) {
+      setErrors({email:"Veuillez entrer votre email"});
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setErrors({email:"Entrer un email valide"});
+      valid = false;
+    }
+    else if(!password) {
+      setErrors({password:"Veuillez entrer votre Mot de passe"});
+      valid = false;
+    }
+    return valid;
+  }
+  const handleLogin = async (event) => {
     const admin = {
       email,
       password
-    }   
-    api.Login(admin).then(response => {console.log(response)})
-    router.push('/dashboard');
-  };
+    }       
+   if (validateForm()){ 
+      api.Login(admin).then(response => {
+          if (response.status === true) {
+            setUser(JSON.stringify(response.data));
+            console.log(response.data.user) 
+            router.push('/');
 
+          } else {
+            console.log('error',response.data.message);
+            // toast.current.show({ severity: 'error', summary: 'Error Message', detail: 'Email  ou mot de passe incorrect ', life: 3000 });
+          }
+        })
+        .catch(err=> {
+          // toast.current.show({ severity: 'error', summary: 'Error Message', detail: 'Email  ou mot de passe incorrect ', life: 3000 });
+          console.error('Error:', err);
+        });
+     
+   } 
+  }
   const renderForm = (
-    <>
-      <Stack spacing={3} paddingBottom={2}>
-        <TextField name="email" label="Adresse Email"onChange={(event) =>{ setEmail(event.target.value)}} />
-        <TextField
-          name="password"
-          label="Mot de passe"
-          type={showPassword ? 'text' : 'password'}
-          onChange={(e) => setPassword(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Stack>
+       <>
+          <Stack spacing={2} paddingBottom={2}>
+            <TextField name="email" label="Adresse Email"onChange={(event) =>{ setEmail(event.target.value)}} error={errors.email} />
+            <FormHelperText sx={{fontSize:'0.9em'}}  error={errors.email}>{errors.email}</FormHelperText>
+            <TextField
 
-      <LoadingButton
-        fullWidth
-        size="large"
-        type="submit"
-        variant="contained"
-        style={{backgroundColor:'#31B3BB'}}
-        onClick={handleClick}
-      >
-        Login
-      </LoadingButton>
-    </>
-  );
+              name="password"
+              label="Mot de passe"
+              type={showPassword ? 'text' : 'password'}
+              onChange={(e) => setPassword(e.target.value)}
+              error={errors.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <FormHelperText sx={{fontSize:'0.9em'}} error={errors.password}>{errors.password}</FormHelperText>
+
+          </Stack>
+
+          <LoadingButton
+            fullWidth
+            size="large"
+            type="submit"
+            variant="contained"
+            style={{backgroundColor:'#31B3BB'}}
+            onClick={handleLogin}
+          >
+            Login
+          </LoadingButton>
+        </>
+    );
 
   return (
     <Box
