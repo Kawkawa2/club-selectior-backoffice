@@ -1,4 +1,3 @@
-//import { toast } from 'react-toastify';
 
 const KEY = "user";
 function setUser(token) {
@@ -36,26 +35,9 @@ function logout(){
 function getHeader() {
   return {
     headers: {
-      Authorization: "Bearer " + getToken(),
+      Authorization: `Bearer ${  getToken()}`,
     },
   };
 }
 
-// function errorhandler(error,defaultMessage="Unknown error"){
-//     if(error.response?.data?.message){
-//         if(error.response?.data?.fieldName){
-//             toast.error(`${error.response.data.fieldName} ${error.response.data.message}`);
-//         }else{
-//         toast.error(error.response.data.message);
-//         }
-//     }else{
-//       if(error?.response?.data?.error){
-//         toast.error(error.response.data.error);
-//       }else{
-
-//         toast.error(defaultMessage);
-//       }
-//     }
-// }
-//, errorhandler : ajouter a Exprot pour envoyer
-export { setUser, getUser, removeUser, getToken, getHeader,logout, isAdmin };
+export { logout, setUser, getUser, isAdmin, getToken,getHeader, removeUser };
