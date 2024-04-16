@@ -16,18 +16,18 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import TableNoData from '../table-no-data';
-import UserTableRow from '../user-table-row';
-import UserTableHead from '../user-table-head';
+import ProTableHead from '../pro-table-head';
+import ProPageTableRow from '../pro-table-row';
 import TableEmptyRows from '../table-empty-rows';
-import UserTableToolbar from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
+import ProTableToolbar from '../pro-table-toolbar';
+import { emptyRows, getComparator, applyFilterPro } from '../utils';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export default function ProPage() {
 
   const [page, setPage] = useState(0);
-  const [users, setUsers] = useState([]);
+  const [pros, setPros] = useState([]);
 
   const [order, setOrder] = useState('asc');
 
@@ -40,16 +40,16 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // fetch the data from the back end 
-  const getAllParticulars = useCallback(() => {
+  const getAllProfessional = useCallback(() => {
     const api = new Api();
 
-    api.getAllParticular().then((res) => {
-      setUsers(res);
+    api.getAllProfessional().then((res) => {
+      setPros(res);
     });
     
   }, []); // Empty dependency array since there are no dependencies
 
-  console.log(users);
+  console.log('pros',pros);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -61,7 +61,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users.map((n) => n.id);
+      const newSelecteds = pros.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -100,8 +100,8 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const dataFiltered = applyFilter({
-    inputData: users,
+  const dataFiltered = applyFilterPro({
+    inputData: pros,
     comparator: getComparator(order, orderBy),
     filterName,
   });
@@ -110,21 +110,21 @@ export default function UserPage() {
   const notFound = !dataFiltered.length && !!filterName;
 
   useEffect(() => {
-    getAllParticulars(); // This will run only once when the component mounts
-  }, [getAllParticulars]); // Add getAllParticulars to the dependency array to ensure useEffect is re-triggered when getAllParticulars changes
+    getAllProfessional(); // This will run only once when the component mounts
+  }, [getAllProfessional]); // Add getAllProfessional to the dependency array to ensure useEffect is re-triggered when getAllProfessional changes
 
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Gestion des particuliers</Typography>
+        <Typography variant="h4">Gestion des Professionnels</Typography>
 
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          Ajouter  un particulier
+          Ajouter  un Professionnel
         </Button>
       </Stack>
 
       <Card>
-        <UserTableToolbar
+        <ProTableToolbar
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
@@ -133,17 +133,22 @@ export default function UserPage() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
+              <ProTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={users.length}
+                rowCount={pros.length}
                 numSelected={selected.length}
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'first_name', label: 'Prénom' },
-                  { id: 'last_name', label: 'Nom' },
+                  { id: 'num_siret', label: 'numéro  de Siret' },
+                  { id: 'company_name', label: 'Nom de l\'entreprise' },
                   { id: 'email', label: 'Email' },
+                  { id: 'phone', label: 'Téléphone' },
+                  { id: 'city', label: 'Ville' },
+                  { id: 'country', label: 'Pays' },
+                  { id: 'postal_code', label: 'Code Postal' },
+                  { id: 'adr_p', label: 'Adresse' },
                   { id: 'action', label: 'Action' },
 
                 ]}
@@ -152,12 +157,18 @@ export default function UserPage() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <UserTableRow
+                    <ProPageTableRow
                       key={row.id}
                       image={row.image}
-                      first_name={row.first_name}
-                      last_name={row.last_name}
+                      num_siret={row.num_siret}
+                      company_name={row.company_name}
                       email={row.email}
+                      phone={row.phone}
+                      city={row.city}
+                      country={row.country}
+                      postal_code={row.postal_code}
+                      adr_p={row.adr_p}
+                      adr_c={row.adr_c}
                       selected={selected.indexOf(row.id) !== -1}
                       handleClick={(event) => handleClick(event, row.id)}
                     />
@@ -165,7 +176,7 @@ export default function UserPage() {
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, users.length)}
+                  emptyRows={emptyRows(page, rowsPerPage, pros.length)}
                 />
 
                 {notFound && <TableNoData query={filterName} />}
@@ -177,7 +188,7 @@ export default function UserPage() {
         <TablePagination
           page={page}
           component="div"
-          count={users.length}
+          count={pros.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}

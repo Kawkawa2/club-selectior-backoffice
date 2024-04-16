@@ -17,9 +17,15 @@ import Iconify from 'src/components/iconify';
 export default function UserTableRow({
   selected,
   image,
-  first_name,
-  last_name,
+  num_siret,
+  company_name,
   email,
+  phone,
+  city,
+  country,
+  postal_code,
+  adr_p,
+  adr_c,
   handleClick,
 }) 
 {
@@ -40,20 +46,24 @@ export default function UserTableRow({
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
+        <TableCell>{num_siret}</TableCell>
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
             <Avatar alt={image} src={`${base}/${image}`} />
             <Typography variant="subtitle2" noWrap>
-              {first_name}
+              {company_name}
             </Typography>
           </Stack>
         </TableCell>
 
-        <TableCell>{last_name}</TableCell>
 
         <TableCell>{email}</TableCell>
-
+        <TableCell>{phone}</TableCell>
+        <TableCell>{city}</TableCell>
+        <TableCell>{country}</TableCell>
+        <TableCell>{postal_code}</TableCell>
+        <TableCell>{adr_p} {adr_c!=null? `- ${adr_c}`: ''}</TableCell>
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -87,9 +97,15 @@ export default function UserTableRow({
 
 UserTableRow.propTypes = {
   image: PropTypes.any,
-  first_name: PropTypes.any,
-  handleClick: PropTypes.func,
-  last_name: PropTypes.any,
+  num_siret: PropTypes.any,
+  company_name: PropTypes.any,
   email: PropTypes.any,
+  phone: PropTypes.any,
+  city: PropTypes.any,
+  country: PropTypes.any,
+  postal_code: PropTypes.any,
+  adr_p: PropTypes.any,
+  adr_c: PropTypes.any,
+  handleClick: PropTypes.func,
   selected: PropTypes.any,
 };

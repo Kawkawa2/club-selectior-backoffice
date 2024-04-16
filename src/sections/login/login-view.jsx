@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -19,7 +20,6 @@ import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
-
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
@@ -51,7 +51,9 @@ export default function LoginView() {
     }
     return valid;
   }
+
   const handleLogin = async (event) => {
+    event.preventDefault();
     const admin = {
       email,
       password
@@ -59,18 +61,29 @@ export default function LoginView() {
    if (validateForm()){ 
       api.Login(admin).then(response => {
           if (response.status === true) {
-            setUser(JSON.stringify(response.data));
-            console.log(response.data.user) 
-            router.push('/');
+            console.log(response.user) 
+            setUser(JSON.stringify(response?.user));
+            router.reload();
 
-          } else {
-            console.log('error',response.data.message);
-            // toast.current.show({ severity: 'error', summary: 'Error Message', detail: 'Email  ou mot de passe incorrect ', life: 3000 });
+          } else if(response.email){
+            setErrors({email: response?.email})
+          }else if(response.password){
+            setErrors({password : response?.password })
           }
         })
         .catch(err=> {
-          // toast.current.show({ severity: 'error', summary: 'Error Message', detail: 'Email  ou mot de passe incorrect ', life: 3000 });
           console.error('Error:', err);
+          toast.error(
+            'Erreur interne du serveur', {
+              position: "top-right",
+              autoClose: 4000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            }
+          );     
         });
      
    } 

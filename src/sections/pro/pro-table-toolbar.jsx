@@ -33,7 +33,7 @@ export default function UserTableToolbar({ numSelected, filterName, onFilterName
         <OutlinedInput
           value={filterName}
           onChange={onFilterName}
-          placeholder="Rechercher un particulier..."
+          placeholder="Rechercher un Pro..."
           startAdornment={
             <InputAdornment position="start">
               <Iconify
