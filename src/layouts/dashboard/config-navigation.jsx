@@ -23,6 +23,11 @@ const navConfig = [
     icon: icon('ic_pro'),
   },
   {
+    title: 'Gestion des admins',
+    path: '/admins',
+    icon: icon('ic_user'),
+  },
+  {
     title: 'Gestion des Store',
     path: '/products',
     icon: icon('ic_cart'),

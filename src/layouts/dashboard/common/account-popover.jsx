@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -14,17 +15,20 @@ import { useRouter } from 'src/routes/hooks';
 import { removeUser } from 'src/utils/helper';
 
 import { account } from 'src/_mock/account';
-
 // ----------------------------------------------------------------------
+
 
 const MENU_OPTIONS = [
   {
     label: 'Profil',
     icon: 'eva:person-fill',
+    link:'profile'
   },
   {
     label: 'Paramètres',
     icon: 'eva:settings-2-fill',
+    link:'parametre'
+
   },
 ];
 
@@ -105,7 +109,9 @@ export default function AccountPopover() {
 
         {MENU_OPTIONS.map((option) => (
           <MenuItem key={option.label} onClick={handleClose}>
-            {option.label}
+            <Link to={`/${option.link}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              {option.label}
+            </Link>
           </MenuItem>
         ))}
 
