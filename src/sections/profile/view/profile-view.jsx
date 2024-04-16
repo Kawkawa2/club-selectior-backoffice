@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { toast } from 'react-toastify';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -6,13 +7,18 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import { alpha } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
-import { Stack, Container } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import InputAdornment from '@mui/material/InputAdornment';
+import { Stack, Container,FormHelperText } from '@mui/material';
 
+import { useRouter } from 'src/routes/hooks';
+
+import { setUser } from 'src/utils/helper';
+
+import Api  from 'src/services/api';
 import { account } from 'src/_mock/account';
 
 import Iconify from 'src/components/iconify';
@@ -20,7 +26,19 @@ import Iconify from 'src/components/iconify';
 export default function BasicCard() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showCPassword, setShowCPassword] = React.useState(false);
+  const [name, setName] = React.useState(account?.displayName || '');
+  const [email, setEmail] = React.useState(account?.email || '');
+  const [password, setPassword] = React.useState('');
+  const [cpassword, setCPassword] = React.useState('');
+  const api = new Api();
+  const router = useRouter();
 
+  const [errors, setErrors]=React.useState({
+    name:'',
+    email:'',
+    password:'',
+    cpassword:'',
+  });
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -28,6 +46,84 @@ export default function BasicCard() {
   const handleToggleCPasswordVisibility = () => {
     setShowCPassword(!showCPassword);
   };
+
+  function validateForm1() {
+    let valid = true;
+    let newErrors = {};
+  
+    // validate the name field
+    if (!name.trim() || (!account || !account.displayName)) {
+      newErrors = { ...newErrors, name: "Veuillez entrer votre Nom complet" };
+      valid = false;
+    }
+  
+    // validate the email field
+    if (!email.trim() || (!account || !account.email)) {
+      newErrors = { ...newErrors, email: "Veuillez entrer votre email" };
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email) || (!account || !account.email)) {
+      newErrors = { ...newErrors, email: "Entrer un email valide" };
+      valid = false;
+    }
+  
+    // Update errors state only if new errors are found
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      // Clear errors if no new errors are found
+      setErrors({});
+    }
+  
+    console.log('new errors', newErrors);
+    return valid;
+  }
+  
+  // handle form submit 1 -- name && email 
+  const handleSubmit1 = async (event) => {
+    event.preventDefault();
+    const admin = {
+      name,
+      email
+    } 
+    console.log('admin',admin);      
+    if (validateForm1()){ 
+      api.ModifierUser(admin,account?.id).then(response => {
+          if (response.status === true) {
+            console.log(response) 
+            setUser(JSON.stringify(response?.user));
+            toast.success(
+              response.message, {
+                position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              }
+            );
+            router.reload();
+
+          } else if(response.email){
+            setErrors({email: response?.email})
+          }
+        })
+        .catch(err=> {
+          console.error('Error:', err);
+          toast.error(
+            'Erreur interne du serveur', {
+              position: "top-right",
+              autoClose: 4000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            }
+          );     
+        });
+   } 
+  }
 
 
   return (
@@ -70,14 +166,18 @@ export default function BasicCard() {
                       type="text"
                       variant="standard"
                       sx={{
-                        mb:2,
+                        mb:1,
                         fontSize:13,
                         label:{
                           fontSize:14,
                         }
                       }}
-                      defaultValue={account?.displayName || ''}
+                      defaultValue={name}
+                      onChange={(event) =>{ setName(event.target.value)}} 
+                      error={errors.name}
                     />
+                    <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.name}>{errors.name}</FormHelperText>
+
                     <TextField
                       required
                       margin="dense"
@@ -87,21 +187,24 @@ export default function BasicCard() {
                       type="email"
                       variant="standard"
                       sx={{
-                        mb:2,
+                        mb:1,
                         fontSize:13,
                         label:{
                           fontSize:14,
                         }
                       }}
-                      defaultValue={account?.email || ''}
+                      defaultValue={email}
+                      onChange={(event) =>{ setEmail(event.target.value)}} error={errors.email}
                     />
+                    <FormHelperText sx={{fontSize:13, mb:1}}  error={errors.email}>{errors.email}</FormHelperText>
+
                 </Box>
 
           </CardContent>
           <Divider/>
           <CardActions sx={{justifyContent:'end', display: 'flex', flexWrap: 'wrap'}}>
               <Button type='reset' color='inherit'>Annuler</Button>
-              <Button type="submit" color='warning'>Modifier</Button>
+              <Button type="submit" color='warning' onClick={handleSubmit1}>Modifier</Button>
           </CardActions>
         </Card>
         
@@ -140,6 +243,8 @@ export default function BasicCard() {
                           fontSize:14,
                         }
                       }}
+                      defaultValue={password}
+                      onChange={(event) =>{ setPassword(event.target.value)}} error={errors.password}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -169,6 +274,8 @@ export default function BasicCard() {
                           fontSize:14,
                         }
                       }}
+                      defaultValue={cpassword}
+                      onChange={(event) =>{ setCPassword(event.target.value)}} error={errors.cpassword}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">

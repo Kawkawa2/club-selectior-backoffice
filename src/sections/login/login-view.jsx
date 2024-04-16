@@ -104,7 +104,7 @@ export default function LoginView() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      <Iconify icon={showPassword ? 'ph:eye' : 'ph:eye-slash'} />
                     </IconButton>
                   </InputAdornment>
                 ),
