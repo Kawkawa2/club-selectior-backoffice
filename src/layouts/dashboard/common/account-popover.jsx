@@ -22,7 +22,7 @@ const MENU_OPTIONS = [
   {
     label: 'Profil',
     icon: 'eva:person-fill',
-    link:'profile'
+    link:'profil'
   },
   {
     label: 'Paramètres',

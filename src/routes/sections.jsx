@@ -47,7 +47,7 @@ export default function Router() {
         { element: <AuthenticatedRoute element={<IndexPage />} />, index: true }, // Wrap IndexPage with AuthenticatedRoute
         { path: 'particuliers', element: <AuthenticatedRoute element={<UserPage />} /> },
         { path: 'professionnels', element: <AuthenticatedRoute element={<ProPage />} /> },
-        { path: 'profile', element: <AuthenticatedRoute element={<ProfilePage />} /> },
+        { path: 'profil', element: <AuthenticatedRoute element={<ProfilePage />} /> },
         { path: 'products', element: <AuthenticatedRoute element={<ProductsPage />} /> },
         { path: 'code-promo', element: <AuthenticatedRoute element={<BlogPage />} /> },
       ],

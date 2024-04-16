@@ -53,7 +53,7 @@ export default function Nav({ openNav, onCloseNav }) {
     >
       <Avatar src={account.photoURL} alt="photoURL" />
 
-      <Box sx={{ ml: 2, textDecoration:'none' }} component={Link} to="/profile">
+      <Box sx={{ ml: 2, textDecoration:'none' }} component={Link} to="/profil">
         <Typography variant="subtitle2">{account?.displayName}</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
