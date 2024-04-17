@@ -24,29 +24,38 @@ import { account } from 'src/_mock/account';
 import Iconify from 'src/components/iconify';
 
 export default function BasicCard() {
+  const api = new Api();
+  const router = useRouter();
+
+  // hooks 
   const [showPassword, setShowPassword] = React.useState(false);
+  const [showOldPassword, setShowOldPassword] = React.useState(false);
   const [showCPassword, setShowCPassword] = React.useState(false);
   const [name, setName] = React.useState(account?.displayName || '');
   const [email, setEmail] = React.useState(account?.email || '');
   const [password, setPassword] = React.useState('');
   const [cpassword, setCPassword] = React.useState('');
-  const api = new Api();
-  const router = useRouter();
-
+  const [oldPassword, setOldPassword] = React.useState('');
   const [errors, setErrors]=React.useState({
     name:'',
     email:'',
     password:'',
     cpassword:'',
+    oldPassword:'',
   });
 
+  // handle toggle  show password icon
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
   const handleToggleCPasswordVisibility = () => {
     setShowCPassword(!showCPassword);
   };
+  const handleToggleOldPasswordVisibility = () => {
+    setShowOldPassword(!showOldPassword);
+  };
 
+  // handlw validation for both forms
   function validateForm1() {
     let valid = true;
     let newErrors = {};
@@ -77,7 +86,47 @@ export default function BasicCard() {
     console.log('new errors', newErrors);
     return valid;
   }
-  
+    // handlw validation for both forms
+    function validateForm2() {
+      let valid = true;
+      let newErrors = {};
+    
+      // validate the oldpassword field
+      if (!oldPassword.trim()) {
+        newErrors = { ...newErrors, oldPassword: "Veuillez entrer votre ancien mot de passe" };
+        valid = false;
+      }
+    
+      // validate the password field
+      if (!password.trim()) {
+        newErrors = { ...newErrors, password: "Veuillez entrer votre nouveau mot de passe" };
+        valid = false;
+      } 
+
+      // validate the cpassword field
+      if (!cpassword.trim()) {
+        newErrors = { ...newErrors, cpassword: "Veuillez saisir à nouveau le mot de passe" };
+        valid = false;
+      }
+      // password and cpassword must match
+
+      if (password && cpassword &&  password !== cpassword ){
+        newErrors = { ...newErrors, cpassword: "Les mots de passe doivent correspondre" };
+        valid = false;
+      }
+    
+      // Update errors state only if new errors are found
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+      } else {
+        // Clear errors if no new errors are found
+        setErrors({});
+      }
+    
+      console.log('new errors form 2', newErrors);
+      return valid;
+    }
+    
   // handle form submit 1 -- name && email 
   const handleSubmit1 = async (event) => {
     event.preventDefault();
@@ -125,6 +174,53 @@ export default function BasicCard() {
    } 
   }
 
+    // handle form submit 2 -- change password 
+    const handleSubmit2 = async (event) => {
+      event.preventDefault();
+      const admin = {
+        oldPassword,
+        password
+      } 
+      console.log('admin 2',admin);      
+      if (validateForm2()){ 
+        api.ModifierMDP(admin,account?.id).then(response => {
+            if (response.status === true) {
+              console.log(response) 
+              setUser(JSON.stringify(response?.user));
+              toast.success(
+                response.message, {
+                  position: "top-right",
+                  autoClose: 4000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                }
+              );
+              router.reload();
+  
+            } else if(response.oldPassword){
+              setErrors({oldPassword: response?.oldPassword})
+            }
+          })
+          .catch(err=> {
+            console.error('Error:', err);
+            toast.error(
+              'Erreur interne du serveur', {
+                position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              }
+            );     
+          });
+     } 
+    }
+
 
   return (
     <Container>
@@ -142,7 +238,9 @@ export default function BasicCard() {
         {/* admin personal informations */}
         <Card 
         variant="outlined"
-          sx={{ maxWidth: 275 , 
+          sx={{ 
+            maxWidth: 275 , 
+            maxHeight:{sm:300},
             borderRadius: 1,
             bgcolor: (theme) => alpha(theme.palette.background.default, 0.9),
           }}
@@ -231,13 +329,45 @@ export default function BasicCard() {
                     <input type='hidden' name='id_user' value={account?.id} />
                     <TextField
                       required
+                      id="opsw"
+                      name="opsw"
+                      label="Ancien Mot de passe..."
+                      type={showOldPassword ? 'text' : 'password'}
+                      variant="standard"
+                      sx={{
+                        mb:1,
+                        fontSize:13,
+                        label:{
+                          fontSize:14,
+                        }
+                      }}
+                      defaultValue={oldPassword}
+                      onChange={(event) =>{ setOldPassword(event.target.value)}} 
+                      error={errors.oldPassword}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleToggleOldPasswordVisibility}
+                              edge="end"
+                            >
+                              <Iconify icon={showOldPassword ? 'ph:eye' : 'ph:eye-slash'} />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.oldPassword}>{errors.oldPassword}</FormHelperText>
+                    <TextField
+                      required
                       id="psw"
                       name="psw"
-                      label="Mot de passe..."
+                      label="Nouveau Mot de passe..."
                       type={showPassword ? 'text' : 'password'}
                       variant="standard"
                       sx={{
-                        mb:2,
+                        mb:1,
                         fontSize:13,
                         label:{
                           fontSize:14,
@@ -259,23 +389,24 @@ export default function BasicCard() {
                         ),
                       }}
                     />
+                    <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.password}>{errors.password}</FormHelperText>
                     <TextField
                       required
-                      margin="dense"
                       id="cpsw"
                       name="cpsw"
                       label="Confirmation mdp..."
                       type={showCPassword ? 'text' : 'password'}
                       variant="standard"
                       sx={{
-                        mb:2,
+                        mb:1,
                         fontSize:13,
                         label:{
                           fontSize:14,
                         }
                       }}
                       defaultValue={cpassword}
-                      onChange={(event) =>{ setCPassword(event.target.value)}} error={errors.cpassword}
+                      onChange={(event) =>{ setCPassword(event.target.value)}} 
+                      error={errors.cpassword}
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -290,12 +421,13 @@ export default function BasicCard() {
                         ),
                       }}
                     />
+                    <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.cpassword}>{errors.cpassword}</FormHelperText>
                 </Box>
           </CardContent>
           <Divider/>
           <CardActions sx={{justifyContent:'end', display: 'flex', flexWrap: 'wrap'}} >
               <Button type='reset' color='inherit'>Annuler</Button>
-              <Button type="submit" color='warning'>Modifier</Button>
+              <Button type="submit" color='warning' onClick={handleSubmit2} >Modifier</Button>
           </CardActions>
         </Card>
       </Stack>

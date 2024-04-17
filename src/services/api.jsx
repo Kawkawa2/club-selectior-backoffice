@@ -24,14 +24,24 @@ class Api {
     // Update admin  user info
     async ModifierUser(user,id) {
       const formData = new FormData();
-          if(user.name)
+      if(user.name)
           formData.append("name", user.name);
-          if(user.email)
+      if(user.email)
           formData.append("email", user.email);
          
-          const res = await axios.post(`${base}/admin/update/${id}`,formData)
-                return res.data;
-          }
+      const res = await axios.post(`${base}/admin/update/${id}`,formData)
+          return res.data;
+    }
+
+    // Update admin  user info
+    async ModifierMDP(user,id) {
+      const formData = new FormData();
+      formData.append("oldPassword", user.oldPassword);
+      formData.append("password", user.password);
+         
+      const res = await axios.post(`${base}/admin/updatePassword/${id}`,formData)
+          return res.data;
+    }
 
 
            
