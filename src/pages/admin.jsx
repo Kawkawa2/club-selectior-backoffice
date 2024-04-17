@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { ProView } from 'src/sections/pro/view';
+import { AdminView } from 'src/sections/admin/view';
 
 // ----------------------------------------------------------------------
 
-export default function ProPage() {
+export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> professionnels </title>
+        <title> Admins </title>
       </Helmet>
 
-      <ProView />
+      <AdminView />
     </>
   );
 }

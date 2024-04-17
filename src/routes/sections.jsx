@@ -11,6 +11,7 @@ const IndexPage = lazy(() => import('src/pages/app'));
 const BlogPage = lazy(() => import('src/pages/blog'));
 const UserPage = lazy(() => import('src/pages/user'));
 const ProPage = lazy(() => import('src/pages/pro'));
+const AdminPage = lazy(() => import('src/pages/admin'));
 const ProfilePage = lazy(() => import('src/pages/profile'));
 const ProductsPage = lazy(() => import('src/pages/products'));
 const Page404 = lazy(() => import('src/pages/page-not-found'));
@@ -47,6 +48,7 @@ export default function Router() {
         { element: <AuthenticatedRoute element={<IndexPage />} />, index: true }, // Wrap IndexPage with AuthenticatedRoute
         { path: 'particuliers', element: <AuthenticatedRoute element={<UserPage />} /> },
         { path: 'professionnels', element: <AuthenticatedRoute element={<ProPage />} /> },
+        { path: 'admins', element: <AuthenticatedRoute element={<AdminPage />} /> },
         { path: 'profil', element: <AuthenticatedRoute element={<ProfilePage />} /> },
         { path: 'products', element: <AuthenticatedRoute element={<ProductsPage />} /> },
         { path: 'code-promo', element: <AuthenticatedRoute element={<BlogPage />} /> },

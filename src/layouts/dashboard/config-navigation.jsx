@@ -25,17 +25,17 @@ const navConfig = [
   {
     title: 'Gestion des admins',
     path: '/admins',
-    icon: icon('ic_user'),
-  },
-  {
-    title: 'Gestion des Store',
-    path: '/products',
-    icon: icon('ic_cart'),
+    icon: icon('ic_admin'),
   },
   {
     title: 'Gestion des codes promo',
     path: '/code-promo',
     icon: icon('ic_code'),
+  },
+  {
+    title: 'Gestion des Store',
+    path: '/products',
+    icon: icon('ic_cart'),
   },
 ];
 

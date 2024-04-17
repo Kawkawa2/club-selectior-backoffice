@@ -35,8 +35,7 @@ export function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-
-export function applyFilterPro ({ inputData, comparator, filterName }) {
+export function applyFilter({ inputData, comparator, filterName }) {
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
@@ -50,8 +49,7 @@ export function applyFilterPro ({ inputData, comparator, filterName }) {
   if (filterName) {
     inputData = inputData.filter(
       (user) => 
-        user.num_siret.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        user.company_name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
         user.email.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 
     );
   }

@@ -21,6 +21,12 @@ class Api {
 
     // /****************API Users-Admin *****************/
     
+    // get all admins
+    async getAllAdmins() {
+      const  res = await axios.get(`${base}/admins`);
+      return res.data;
+    }
+
     // Update admin  user info
     async ModifierUser(user,id) {
       const formData = new FormData();
