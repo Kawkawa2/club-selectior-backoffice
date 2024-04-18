@@ -39,7 +39,7 @@ class Api {
           return res.data;
     }
 
-    // Update admin  user info
+    // Update profile info
     async ModifierMDP(user,id) {
       const formData = new FormData();
       formData.append("oldPassword", user.oldPassword);
@@ -48,7 +48,33 @@ class Api {
       const res = await axios.post(`${base}/admin/updatePassword/${id}`,formData)
           return res.data;
     }
+    
+    // added new  admin 
+    async AjouterUser(user) {
+      const formData = new FormData();
+        formData.append("name", user.name);
+        formData.append("email", user.email);
+        formData.append("password", user.password);
+        
+      const res = await axios.post(`${base}/admin/register`,formData)
+          return res.data;
+    }
+    
+    // Update admin  user info
+    async ModifierAdmin(user,id) {
+      console.log(user);
+      const formData = new FormData();
+      if(user.name)
+          formData.append("name", user.name);
+      if(user.email)
+          formData.append("email", user.email);
+      if(user.password)
+          formData.append("password", user.password);
+      // formData.append('updated_at', moment().format());
 
+      const res = await axios.post(`${base}/admin/updateAdmin/${id}`,formData)
+          return res.data;
+    }
 
            
 

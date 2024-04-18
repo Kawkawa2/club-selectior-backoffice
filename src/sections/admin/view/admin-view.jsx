@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { useState, useEffect,useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -32,7 +33,6 @@ import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../admin-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-
 // ----------------------------------------------------------------------
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -61,15 +61,28 @@ export default function AdminPage() {
 
   const [open, setOpen] = useState(false);
 
+  
   const [showPassword, setShowPassword] = useState(false);
   const [showCPassword, setShowCPassword] = useState(false);
-
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [cpassword, setCPassword] = useState('');
+  const [errors, setErrors]=useState({
+    name:'',
+    email:'',
+    password:'',
+    cpassword:'',
+  });
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
+  const handleReset = ()=>{
+    freeData();
+  }
 
   // handle toggle  show password icon
   const handleTogglePasswordVisibility = () => {
@@ -78,6 +91,111 @@ export default function AdminPage() {
   const handleToggleCPasswordVisibility = () => {
     setShowCPassword(!showCPassword);
   };
+  const freeData=()=>{
+    setName('');
+    setEmail('');
+    setPassword('');
+    setCPassword('');
+    setErrors({});
+  }
+
+  // handlw validation for both forms
+  function validateForm() {
+    let valid = true;
+    let newErrors = {};
+  
+    // validate the name field
+    if (!name.trim()) {
+      newErrors = { ...newErrors, name: "Veuillez entrer votre Nom complet" };
+      valid = false;
+    }
+  
+    // validate the email field
+    if (!email.trim()) {
+      newErrors = { ...newErrors, email: "Veuillez entrer votre email" };
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors = { ...newErrors, email: "Entrer un email valide" };
+      valid = false;
+    }
+
+    // validate the password field
+    if (!password.trim()) {
+      newErrors = { ...newErrors, password: "Veuillez entrer votre nouveau mot de passe" };
+      valid = false;
+    } 
+
+    // validate the cpassword field
+    if (!cpassword.trim()) {
+      newErrors = { ...newErrors, cpassword: "Veuillez saisir à nouveau le mot de passe" };
+      valid = false;
+    }
+    // password and cpassword must match
+
+    if (password && cpassword &&  password !== cpassword ){
+      newErrors = { ...newErrors, cpassword: "Les mots de passe doivent correspondre" };
+      valid = false;
+    }  
+    // Update errors state only if new errors are found
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      // Clear errors if no new errors are found
+      setErrors({});
+    }
+  
+    console.log('new errors', newErrors);
+    return valid;
+  }
+
+  // handle form submit 1 -- name && email 
+  const handleSubmit1 = async (event) => {
+      const api = new Api();
+      event.preventDefault();
+      const admin = {
+        name,
+        email,
+        password
+      } 
+      console.log('admin',admin);      
+      if (validateForm()){ 
+        api.AjouterUser(admin).then(response => {
+            if (response.status === true) {
+              console.log(response) 
+              toast.success(
+                response.message, {
+                  position: "top-right",
+                  autoClose: 4000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                }
+              );
+              getAllAdmins();
+              freeData();
+              handleClose();
+            } else if(response.email){
+              setErrors({email: response?.email})
+            }
+          })
+          .catch(err=> {
+            console.error('Error:', err);
+            toast.error(
+              'Erreur interne du serveur', {
+                position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              }
+            );     
+          });
+     } 
+  }
 
   // fetch the data from the back end 
   const getAllAdmins = useCallback(() => {
@@ -88,8 +206,6 @@ export default function AdminPage() {
     });
     
   }, []); // Empty dependency array since there are no dependencies
-
-  console.log(admins);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -185,14 +301,9 @@ export default function AdminPage() {
           <Iconify icon="ri:close-fill" />
         </IconButton>
 
-        <DialogContent dividers>
-          <Box component='form' sx={{ py: 2 , width: 500 , minWidth:200}}> 
-          <Stack direction='row' spacing={{sm:7,xs:2}}  useFlexGap flexWrap="wrap"
-            sx={{
-              my: {sm:'auto', xs:5}, 
-              mx:{sm:'auto', xs:5}
-            }}
-            >
+        <DialogContent dividers sx={{width: {sm:400} , minWidth:200}} >
+          <Box component='form' 
+            sx={{  my: {sm:'auto', xs:1}, mx:{sm:'auto', xs:1}}} > 
               <TextField
                 required
                 id="name"
@@ -200,18 +311,20 @@ export default function AdminPage() {
                 label="Le nom..."
                 type="text"
                 variant="standard"
+                size='small'
+                fullWidth
                 sx={{
-                  mb:1,
+                  mb:2,
                   fontSize:13,
                   label:{
                     fontSize:14,
                   }
                 }}
-                // defaultValue={name}
-                // onChange={(event) =>{ setName(event.target.value)}} 
-                // error={errors.name}
+                value={name}
+                onChange={(event) =>{ setName(event.target.value)}} 
+                error={errors.name}
               />
-              {/* <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.name}>{errors.name}</FormHelperText> */}
+              <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.name}>{errors.name}</FormHelperText>
               
               <TextField
                 required
@@ -220,40 +333,44 @@ export default function AdminPage() {
                 label="Adresse e-mail..."
                 type="email"
                 variant="standard"
+                size='small'
+                fullWidth
                 sx={{
-                  mb:1,
+                  mb:2,
                   fontSize:13,
                   label:{
                     fontSize:14,
                   }
                 }}
             
-                // defaultValue={email}
-                // onChange={(event) =>{ setName(event.target.value)}} 
-                // error={errors.email}
+                value={email}
+                onChange={(event) =>{ setEmail(event.target.value)}} 
+                error={errors.email}
               />
-              {/* <FormHelperText sx={{fontSize:13, mb:1}}  error={errors.email}>{errors.email}</FormHelperText> */}
+              <FormHelperText sx={{fontSize:13, mb:1}}  error={errors.email}>{errors.email}</FormHelperText>
               
               <TextField
                 required
                 id="psw"
                 name="psw"
                 label="Mot de passe..."
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 variant="standard"
+                size='small'
+                fullWidth
                 sx={{
-                  mb:1,
+                  mb:2,
                   fontSize:13,
                   label:{
                     fontSize:14,
                   }
                 }}
-                // defaultValue={password}
-                // onChange={(event) =>{ setPassword(event.target.value)}} error={errors.password}
-                // error={errors.password}
+                value={password}
+                onChange={(event) =>{ setPassword(event.target.value)}} 
+                error={errors.password}
                 InputProps={{
                   endAdornment: (
-                    <InputAdornment position="end">
+                    <InputAdornment position="start">
                       <IconButton
                         aria-label="toggle password visibility"
                         onClick={handleTogglePasswordVisibility}
@@ -265,49 +382,49 @@ export default function AdminPage() {
                   ),
                 }}
               />
+              <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.password}>{errors.password}</FormHelperText>
 
-              {/* <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.password}>{errors.password}</FormHelperText> */}
               <TextField
                 required
-                      id="cpsw"
-                      name="cpsw"
-                      label="Confirmation mdp..."
-                      type={showCPassword ? 'text' : 'password'}
-                      variant="standard"
-                      sx={{
-                        mb:1,
-                        fontSize:13,
-                        label:{
-                          fontSize:14,
-                        }
-                      }}
-                      // defaultValue={cpassword}
-                      // onChange={(event) =>{ setCPassword(event.target.value)}} 
-                      // error={errors.cpassword}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={handleToggleCPasswordVisibility}
-                              edge="end"
-                            >
-                              <Iconify icon={showCPassword ? 'ph:eye' : 'ph:eye-slash'} />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
+                id="cpsw"
+                name="cpsw"
+                label="Confirmation mdp..."
+                type={showCPassword ? 'text' : 'password'}
+                variant="standard"
+                size='small'
+                fullWidth
+                sx={{
+                  mb:2,
+                  fontSize:13,
+                  label:{
+                  fontSize:14,
+                  }
+                }}
+                value={cpassword}
+                onChange={(event) =>{ setCPassword(event.target.value)}} 
+                error={errors.cpassword}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleToggleCPasswordVisibility}
+                        edge="end"
+                      >
+                        <Iconify icon={showCPassword ? 'ph:eye' : 'ph:eye-slash'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                 }}
               />
-              {/* <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.cpassword}>{errors.cpassword}</FormHelperText> */}
-
-          </Stack>
+              <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.cpassword}>{errors.cpassword}</FormHelperText>
           </Box>
         </DialogContent>
         <DialogActions sx={{justifyContent:'end', display: 'flex', flexWrap: 'wrap'}}>
-          <Button type='reset' onClick={handleClose}  color="inherit">
+          <Button type='reset' onClick={handleReset} color="inherit">
             Annuler
           </Button>
-          <Button type='submit' autoFocus onClick={handleClose}  color="warning">
+          <Button type='submit' autoFocus  color="warning" onClick={handleSubmit1} >
             Ajouter
           </Button>
         </DialogActions>
@@ -346,13 +463,16 @@ export default function AdminPage() {
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
+                      id={row.id}
                       name={row.name}
                       email={row.email}
                       created_at={row.created_at}
                       updated_at={row.updated_at}
                       selected={selected.indexOf(row.id) !== -1}
                       handleClick={(event) => handleClick(event, row.id)}
+                      getAllAdmins={getAllAdmins}
                     />
+                    
                   ))}
 
                 <TableEmptyRows

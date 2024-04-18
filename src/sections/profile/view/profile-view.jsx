@@ -86,8 +86,8 @@ export default function BasicCard() {
     console.log('new errors', newErrors);
     return valid;
   }
-    // handlw validation for both forms
-    function validateForm2() {
+  // handlw validation for both forms
+  function validateForm2() {
       let valid = true;
       let newErrors = {};
     
@@ -125,7 +125,7 @@ export default function BasicCard() {
     
       console.log('new errors form 2', newErrors);
       return valid;
-    }
+  }
     
   // handle form submit 1 -- name && email 
   const handleSubmit1 = async (event) => {
@@ -174,8 +174,8 @@ export default function BasicCard() {
    } 
   }
 
-    // handle form submit 2 -- change password 
-    const handleSubmit2 = async (event) => {
+  // handle form submit 2 -- change password 
+  const handleSubmit2 = async (event) => {
       event.preventDefault();
       const admin = {
         oldPassword,
@@ -219,7 +219,7 @@ export default function BasicCard() {
             );     
           });
      } 
-    }
+  }
 
 
   return (
