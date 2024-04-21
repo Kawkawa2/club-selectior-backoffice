@@ -21,6 +21,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import InputAdornment from '@mui/material/InputAdornment';
+import DialogContentText from '@mui/material/DialogContentText';
 
 import Api from 'src/services/api';
 
@@ -50,6 +51,8 @@ export default function UserTableRow({
   // the hooks
   const [open, setOpen] = useState(null);
   const [openUpdateDialog, setUpdateDialog] = useState(false);
+  const [openDeleteDialog, setDeleteDialog] = useState(false);
+
   const [Name,setName] = useState(name);
   const [Email,setEmail] = useState(email);
   const [password, setPassword] = useState('');
@@ -73,7 +76,7 @@ export default function UserTableRow({
   };
 
   // function that handle  dialog that update admin
-  const handleClickOpen = () => {
+  const handleClickOpenUpdate = () => {
     setUpdateDialog(true);
   };
   const handleClose = () => {
@@ -84,6 +87,15 @@ export default function UserTableRow({
   const handleReset = ()=>{
     freeData()
   }
+
+  // function that handle  dialog that delete admin
+  const handleClickOpenDelete = () => {
+    setDeleteDialog(true);
+  };
+  const handleCloseDelete = () => {
+    setDeleteDialog(false);
+    setOpen(null)
+  };
 
 
   // handle toggle  show password icon
@@ -146,7 +158,7 @@ export default function UserTableRow({
     return valid;
   }
 
-  // handle form submit 1 -- name && email 
+  // handle form submit 1 -- name && email && password
   const handleSubmit1 = async (event) => {
       const api = new Api();
       event.preventDefault();
@@ -194,6 +206,43 @@ export default function UserTableRow({
      } 
   }
 
+  // handle form submit 2 -- delete admin
+  const handleSubmit2 = async (event) => {
+      const api = new Api();
+      event.preventDefault();
+      api.SupprimerAdmin(id).then(response => {
+        if (response.status === true) {
+          toast.success(
+          response.message, {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          }
+          );
+          handleCloseDelete();
+          handleCloseMenu();
+          getAllAdmins();
+        }
+      })
+      .catch(err=> {
+          toast.error(
+          'Erreur interne du serveur', {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        }
+        );     
+      });
+  } 
+
 
   return (
     <>
@@ -236,12 +285,12 @@ export default function UserTableRow({
         }}
       >
         {/* action  update */}
-        <MenuItem onClick={handleClickOpen}>
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} onClick={handleClickOpen} />
+        <MenuItem onClick={handleClickOpenUpdate}>
+          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Modifier
         </MenuItem>
 
-        {/* modal for adding an admin */}
+        {/* modal for updating an admin */}
         <BootstrapDialog
           onClose={handleClose}
           aria-labelledby="customized-dialog-title"
@@ -394,10 +443,32 @@ export default function UserTableRow({
         </BootstrapDialog>
 
         {/* action  delete */}
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleClickOpenDelete}  sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Supprimer
         </MenuItem>
+
+        {/* modal for deleting an admin */}
+        <Dialog
+          open={openDeleteDialog}
+          onClose={handleCloseDelete}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Supprimer <i>{name}</i>
+          </DialogTitle>
+          <DialogContent sx={{width: {sm:400} , minWidth:200}}>
+            <DialogContentText id="alert-dialog-description">
+              Est ce que vous êtes sûr de vouloir supprimer cet administrateur? Cette opération est irréversible!
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDelete} color='inherit'>Annuler</Button>
+            <Button onClick={handleSubmit2} color='warning'>Supprimer</Button>
+          </DialogActions>
+        </Dialog>
+        
       </Popover>
     </>
   );

@@ -26,6 +26,8 @@ export default function UserTableRow({
   postal_code,
   adr_p,
   adr_c,
+  created_at,
+  updated_at,
   handleClick,
 }) 
 {
@@ -64,6 +66,10 @@ export default function UserTableRow({
         <TableCell>{country}</TableCell>
         <TableCell>{postal_code}</TableCell>
         <TableCell>{adr_p} {adr_c!=null? `- ${adr_c}`: ''}</TableCell>
+
+        <TableCell>{created_at}</TableCell>
+        <TableCell>{updated_at}</TableCell>
+        
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -106,6 +112,8 @@ UserTableRow.propTypes = {
   postal_code: PropTypes.any,
   adr_p: PropTypes.any,
   adr_c: PropTypes.any,
+  created_at: PropTypes.any,
+  updated_at: PropTypes.any,
   handleClick: PropTypes.func,
   selected: PropTypes.any,
 };

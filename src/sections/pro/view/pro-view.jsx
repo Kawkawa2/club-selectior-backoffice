@@ -149,6 +149,8 @@ export default function ProPage() {
                   { id: 'country', label: 'Pays' },
                   { id: 'postal_code', label: 'Code Postal' },
                   { id: 'adr_p', label: 'Adresse' },
+                  { id: 'created_at', label: 'Créé à' },
+                  { id: 'updated_at', label: 'Modifier à' },
                   { id: 'action', label: 'Action' },
 
                 ]}
@@ -169,6 +171,8 @@ export default function ProPage() {
                       postal_code={row.postal_code}
                       adr_p={row.adr_p}
                       adr_c={row.adr_c}
+                      created_at={row.created_at}
+                      updated_at={row.updated_at}
                       selected={selected.indexOf(row.id) !== -1}
                       handleClick={(event) => handleClick(event, row.id)}
                     />

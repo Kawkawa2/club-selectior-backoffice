@@ -121,7 +121,7 @@ export default function AdminPage() {
 
     // validate the password field
     if (!password.trim()) {
-      newErrors = { ...newErrors, password: "Veuillez entrer votre nouveau mot de passe" };
+      newErrors = { ...newErrors, password: "Veuillez entrer votre mot de passe" };
       valid = false;
     } 
 
@@ -144,7 +144,6 @@ export default function AdminPage() {
       setErrors({});
     }
   
-    console.log('new errors', newErrors);
     return valid;
   }
 
@@ -157,11 +156,9 @@ export default function AdminPage() {
         email,
         password
       } 
-      console.log('admin',admin);      
       if (validateForm()){ 
         api.AjouterUser(admin).then(response => {
             if (response.status === true) {
-              console.log(response) 
               toast.success(
                 response.message, {
                   position: "top-right",
