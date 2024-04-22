@@ -24,12 +24,6 @@ const MENU_OPTIONS = [
     icon: 'eva:person-fill',
     link:'profil'
   },
-  {
-    label: 'Paramètres',
-    icon: 'eva:settings-2-fill',
-    link:'parametre'
-
-  },
 ];
 
 // ----------------------------------------------------------------------
@@ -46,7 +40,7 @@ export default function AccountPopover() {
   };
   const handleLogout = () => {
     removeUser('user');
-    router.push('/login');
+    router.reload();
     
   };
 

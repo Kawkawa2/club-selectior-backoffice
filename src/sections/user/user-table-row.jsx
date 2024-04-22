@@ -286,7 +286,9 @@ export default function UserTableRow({
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={image} src={`${base}/${image}`} />
+            <FormLabel component='a' href={`${base}/${image}`} target="_blank">
+              <Avatar alt={image} src={`${base}/${image}`} />
+            </FormLabel>
             <Typography variant="subtitle2" noWrap>
               {first_name}
             </Typography>
@@ -322,7 +324,7 @@ export default function UserTableRow({
           Modifier
         </MenuItem>
 
-         {/* modal for updating an admin */}
+         {/* modal for updating a particular */}
          <BootstrapDialog
           onClose={handleClose}
           aria-labelledby="customized-dialog-title"
@@ -545,7 +547,7 @@ export default function UserTableRow({
           Supprimer
         </MenuItem>
 
-        {/* modal for deleting an admin */}
+        {/* modal for deleting a particular */}
         <Dialog
           open={openDeleteDialog}
           onClose={handleCloseDelete}

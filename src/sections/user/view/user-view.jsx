@@ -300,7 +300,7 @@ export default function UserPage() {
         </Button>
       </Stack>
 
-      {/* modal for adding an admin */}
+      {/* modal for adding a particular */}
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
@@ -539,7 +539,7 @@ export default function UserPage() {
                   { id: 'last_name', label: 'Nom' },
                   { id: 'email', label: 'Email' },
                   { id: 'created_at', label: 'Créé à' },
-                  { id: 'updated_at', label: 'Modifier à' },
+                  { id: 'updated_at', label: 'Modifié à' },
                   { id: 'action', label: 'Action' },
 
                 ]}

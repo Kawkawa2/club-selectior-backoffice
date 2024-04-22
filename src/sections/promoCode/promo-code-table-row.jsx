@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
+import Chip from '@mui/material/Chip';
+import Select from '@mui/material/Select';
 import Dialog from '@mui/material/Dialog';
 import Button from '@mui/material/Button';
 import Popover from '@mui/material/Popover';
@@ -12,21 +12,19 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
+import {FormHelperText } from '@mui/material';
 import TableCell from '@mui/material/TableCell';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
 import DialogTitle from '@mui/material/DialogTitle';
-import {FormLabel,FormHelperText } from '@mui/material';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import InputAdornment from '@mui/material/InputAdornment';
 import DialogContentText from '@mui/material/DialogContentText';
 
 import Api from 'src/services/api';
 
 import Iconify from 'src/components/iconify';
-
 // ----------------------------------------------------------------------
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -37,36 +35,33 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function UserTableRow({
+export default function PromoCodeTableRow({
   id,
-  name,
-  email,
+  code,
+  price,
+  forPro,
   created_at,
   updated_at,
   selected,
   handleClick,
-  getAllAdmins
+  getAllPromoCode
 }) 
 {
-  // the hooks
+
   const [open, setOpen] = useState(null);
   const [openUpdateDialog, setUpdateDialog] = useState(false);
   const [openDeleteDialog, setDeleteDialog] = useState(false);
 
-  const [Name,setName] = useState(name);
-  const [Email,setEmail] = useState(email);
-  const [password, setPassword] = useState('');
-  const [cpassword, setCPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showCPassword, setShowCPassword] = useState(false);
+  const [Code, setCode] = useState(code);
+  const [Price, setPrice] = useState(price);
+  const [ForPro, setForPro] = useState(forPro);
   const [errors, setErrors]=useState({
-    name:'',
-    email:'',
-    password:'',
-    cpassword:'',
+    code:'',
+    price:'',
+    forPro:'',
   });
 
-  // functio that handle dialog open and close
+  // handle dialog menu
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
@@ -84,9 +79,6 @@ export default function UserTableRow({
     setOpen(null)
     freeData()
   };
-  const handleReset = ()=>{
-    freeData()
-  }
 
   // function that handle  dialog that delete admin
   const handleClickOpenDelete = () => {
@@ -98,55 +90,34 @@ export default function UserTableRow({
   };
 
 
-  // handle toggle  show password icon
-   const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-  const handleToggleCPasswordVisibility = () => {
-    setShowCPassword(!showCPassword);
-  };
-
   // delete the data 
   const freeData=()=>{
-    setName(name);
-    setEmail(email);
-    setPassword('');
-    setCPassword('');
+    setCode(code);
+    setPrice(price);
+    setForPro(forPro);
     setErrors({});
   }
-
-  // function  that validate the form  
+  // handlw validation for  form
   function validateForm() {
     let valid = true;
     let newErrors = {};
   
-    // validate the name field
-    if (!Name.trim() ||!name) {
-      newErrors = { ...newErrors, name: "Veuillez entrer votre Nom complet" };
+    // validate the numSiret field
+    if (!Code.trim() || !code) {
+      newErrors = { ...newErrors, code: "Veuillez entrer le code promo" };
       valid = false;
     }
   
-    // validate the email field
-    if (!Email.trim() || !email) {
-      newErrors = { ...newErrors, email: "Veuillez entrer votre email" };
-      valid = false;
-    } else if (!/\S+@\S+\.\S+/.test(Email) || !email) {
-      newErrors = { ...newErrors, email: "Entrer un email valide" };
+    // validate the postalCode field type (only numbers allowed)
+    if (!Price || !price) {
+      newErrors = { ...newErrors, price: "Veuillez entrer le prix réduit" };
       valid = false;
     }
-
-    // validate the password field
-    if (password.trim() && !cpassword.trim()) {
-      newErrors = { ...newErrors, cpassword: "Veuillez saisir à nouveau le mot de passe" };
+    else if(Price && !/^\d+$/.test(Price)) {
+      newErrors = { ...newErrors, price: "Le prix doit contenir uniquement des chiffres" };
       valid = false;
-    } 
-
-    // password and cpassword must match
-    if (password && cpassword &&  password !== cpassword ){
-      newErrors = { ...newErrors, cpassword: "Les mots de passe doivent correspondre" };
-      valid = false;
-    }  
-
+    }
+    
     // Update errors state only if new errors are found
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -154,7 +125,6 @@ export default function UserTableRow({
       // Clear errors if no new errors are found
       setErrors({});
     }
-  
     return valid;
   }
 
@@ -162,13 +132,13 @@ export default function UserTableRow({
   const handleSubmit1 = async (event) => {
       const api = new Api();
       event.preventDefault();
-      const admin = {
-        name:Name,
-        email:Email,
-        password
+      const promo_code = {
+        'code': Code,
+        'price':Price,
+        'for_pro':ForPro,
       } 
       if (validateForm()){ 
-        api.ModifierAdmin(admin,id).then(response => {
+        api.ModifierCodePromo(promo_code,id).then(response => {
             if (response.status === true) {
               toast.success(
                 response.message, {
@@ -181,16 +151,18 @@ export default function UserTableRow({
                   progress: undefined,
                 }
               );
-              freeData();
+              // freeData();
               handleClose();
               handleCloseMenu();
-              getAllAdmins();
+              getAllPromoCode()
+              // router.reload();
               
-            } else if(response.email){
-              setErrors({email: response?.email})
+            } else if(response.code){
+              setErrors({code: response?.code})
             }
           })
           .catch(err=> {
+            console.log('error',err);
             toast.error(
               'Erreur interne du serveur', {
                 position: "top-right",
@@ -210,7 +182,7 @@ export default function UserTableRow({
   const handleSubmit2 = async (event) => {
       const api = new Api();
       event.preventDefault();
-      api.SupprimerAdmin(id).then(response => {
+      api.SupprimerCodePromo(id).then(response => {
         if (response.status === true) {
           toast.success(
           response.message, {
@@ -225,10 +197,11 @@ export default function UserTableRow({
           );
           handleCloseDelete();
           handleCloseMenu();
-          getAllAdmins();
+          getAllPromoCode();
         }
       })
       .catch(err=> {
+        console.log('error',err);
           toast.error(
           'Erreur interne du serveur', {
           position: "top-right",
@@ -243,31 +216,25 @@ export default function UserTableRow({
       });
   } 
 
-
   return (
     <>
-      {/* table content */}
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
-
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <FormLabel component='a' href='/assets/images/avatars/avatar_25.jpg' target="_blank">
-              <Avatar alt='image admin' src='/assets/images/avatars/avatar_25.jpg' />
-            </FormLabel>
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
+        <TableCell>{code}</TableCell>
+        <TableCell>{price}</TableCell>
+        <TableCell>
+          {
+          forPro?
+          <Chip label="professionnel" size="small" color="primary"/>
+          :
+          <Chip label="Particulier" size="small" color="warning" />
+          }
         </TableCell>
-
-
-        <TableCell>{email}</TableCell>
         <TableCell>{created_at}</TableCell>
         <TableCell>{updated_at}</TableCell>
-
+        
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -275,7 +242,6 @@ export default function UserTableRow({
         </TableCell>
       </TableRow>
 
-      {/* Actions */}
       <Popover
         open={!!open}
         anchorEl={open}
@@ -286,42 +252,66 @@ export default function UserTableRow({
           sx: { width: 140 },
         }}
       >
-        {/* action  update */}
         <MenuItem onClick={handleClickOpenUpdate}>
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Modifier
         </MenuItem>
 
-        {/* modal for updating an admin */}
-        <BootstrapDialog
-          onClose={handleClose}
-          aria-labelledby="customized-dialog-title"
-          open={openUpdateDialog}
-        >
-          <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-            Modifier un  admin
-          </DialogTitle>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
+          {/* modal for updating a pro */}
+          <BootstrapDialog
+            onClose={handleClose}
+            aria-labelledby="customized-dialog-title"
+            open={openUpdateDialog}
           >
-            <Iconify icon="ri:close-fill" />
-          </IconButton>
+            <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+              Modifier un  code promo
+            </DialogTitle>
+            <IconButton
+              aria-label="close"
+              onClick={handleClose}
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+                color: (theme) => theme.palette.grey[500],
+              }}
+            >
+              <Iconify icon="ri:close-fill" />
+            </IconButton>
 
-          <DialogContent dividers sx={{width: {sm:400} , minWidth:200}} >
+            <DialogContent dividers sx={{width: {sm:400} , minWidth:200}} >
             <Box component='form' 
               sx={{  my: {sm:'auto', xs:1}, mx:{sm:'auto', xs:1}}} > 
+                <InputLabel sx={{fontSize:14}} id="forPro">Type de bénéficiaire...</InputLabel>
+                <Select
+                  required
+                  labelId="forPro"
+                  id="forPro"
+                  name='forPro'
+                  variant="standard"
+                  size='small'
+                  label="Type de bénéficiaire..."
+                  fullWidth
+                  sx={{
+                    mb:2,
+                    fontSize:13,
+                    label:{
+                      fontSize:14,
+                    }
+                  }}
+                  value={ForPro}
+                  onChange={(event) =>{ setForPro(event.target.value)}} 
+                  error={!!errors.forPro}
+                >
+                  <MenuItem value={1}>Professionnel</MenuItem>
+                  <MenuItem value={0}>Particulier</MenuItem>
+              </Select>
+                
                 <TextField
                   required
-                  id="name"
-                  name="name"
-                  label="Le nom..."
+                  id="code"
+                  name="code"
+                  label="Code ..."
                   type="text"
                   variant="standard"
                   size='small'
@@ -333,18 +323,18 @@ export default function UserTableRow({
                       fontSize:14,
                     }
                   }}
-                  value={Name}
-                  onChange={(event) =>{ setName(event.target.value)}} 
-                  error={errors.name}
+                  value={Code}
+                  onChange={(event) =>{ setCode(event.target.value)}} 
+                  error={!!errors.code}
                 />
-                <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.name}>{errors.name}</FormHelperText>
+                <FormHelperText sx={{fontSize:13,mb:1}} error={!!errors.code}>{errors.code}</FormHelperText>
                 
                 <TextField
                   required
-                  id="email"
-                  name="email"
-                  label="Adresse e-mail..."
-                  type="email"
+                  id="price"
+                  name="price"
+                  label="Prix ..."
+                  type="text"
                   variant="standard"
                   size='small'
                   fullWidth
@@ -355,102 +345,31 @@ export default function UserTableRow({
                       fontSize:14,
                     }
                   }}
-              
-                  value={Email}
-                  onChange={(event) =>{ setEmail(event.target.value)}} 
-                  error={errors.email}
+                  value={Price}
+                  onChange={(event) =>{ setPrice(event.target.value)}} 
+                  error={!!errors.price}
                 />
-                <FormHelperText sx={{fontSize:13, mb:1}}  error={errors.email}>{errors.email}</FormHelperText>
-                
-                <TextField
-                  required
-                  id="psw"
-                  name="psw"
-                  label="Mot de passe..."
-                  type={showPassword ? 'text' : 'password'}
-                  variant="standard"
-                  size='small'
-                  fullWidth
-                  sx={{
-                    mb:2,
-                    fontSize:13,
-                    label:{
-                      fontSize:14,
-                    }
-                  }}
-                  value={password}
-                  onChange={(event) =>{ setPassword(event.target.value)}} 
-                  error={errors.password}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="start">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleTogglePasswordVisibility}
-                          edge="end"
-                        >
-                          <Iconify icon={showPassword ? 'ph:eye' : 'ph:eye-slash'} />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.password}>{errors.password}</FormHelperText>
+                <FormHelperText sx={{fontSize:13,mb:1}}  error={!!errors.price}>{errors.price}</FormHelperText>
 
-                <TextField
-                  required
-                  id="cpsw"
-                  name="cpsw"
-                  label="Confirmation mdp..."
-                  type={showCPassword ? 'text' : 'password'}
-                  variant="standard"
-                  size='small'
-                  fullWidth
-                  sx={{
-                    mb:2,
-                    fontSize:13,
-                    label:{
-                    fontSize:14,
-                    }
-                  }}
-                  value={cpassword}
-                  onChange={(event) =>{ setCPassword(event.target.value)}} 
-                  error={errors.cpassword}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="start">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleToggleCPasswordVisibility}
-                          edge="end"
-                        >
-                          <Iconify icon={showCPassword ? 'ph:eye' : 'ph:eye-slash'} />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.cpassword}>{errors.cpassword}</FormHelperText>
             </Box>
-          </DialogContent>
+            </DialogContent>
 
-          <DialogActions sx={{justifyContent:'end', display: 'flex', flexWrap: 'wrap'}}>
-            <Button type='reset' onClick={handleReset} color="inherit">
-              Annuler
-            </Button>
-            <Button type='submit' autoFocus  color="warning" onClick={handleSubmit1} >
-              Modifier
-            </Button>
-          </DialogActions>
-        </BootstrapDialog>
+            <DialogActions sx={{justifyContent:'end', display: 'flex', flexWrap: 'wrap'}}>
+              <Button type='reset' onClick={freeData} color="inherit">
+                Annuler
+              </Button>
+              <Button type='submit' autoFocus  color="warning" onClick={handleSubmit1} >
+                Modifier
+              </Button>
+            </DialogActions>
+          </BootstrapDialog>
 
-        {/* action  delete */}
-        <MenuItem onClick={handleClickOpenDelete}  sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleClickOpenDelete} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Supprimer
         </MenuItem>
 
-        {/* modal for deleting an admin */}
+        {/* modal for deleting a pro */}
         <Dialog
           open={openDeleteDialog}
           onClose={handleCloseDelete}
@@ -458,7 +377,7 @@ export default function UserTableRow({
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            Supprimer <i>{name}</i>
+            Supprimer <i>{code} </i>
           </DialogTitle>
           <DialogContent sx={{width: {sm:400} , minWidth:200}}>
             <DialogContentText id="alert-dialog-description">
@@ -470,19 +389,19 @@ export default function UserTableRow({
             <Button onClick={handleSubmit2} color='warning'>Supprimer</Button>
           </DialogActions>
         </Dialog>
-        
       </Popover>
     </>
   );
 }
 
-UserTableRow.propTypes = {
+PromoCodeTableRow.propTypes = {
   id: PropTypes.any,
-  name: PropTypes.any,
-  handleClick: PropTypes.func,
-  getAllAdmins:PropTypes.func,
-  updated_at: PropTypes.any,
+  code: PropTypes.any,
+  price: PropTypes.any,
+  forPro: PropTypes.any,
   created_at: PropTypes.any,
-  email: PropTypes.any,
+  updated_at: PropTypes.any,
+  handleClick: PropTypes.func,
+  getAllPromoCode:PropTypes.func,
   selected: PropTypes.any,
 };

@@ -32,11 +32,6 @@ const navConfig = [
     path: '/code-promo',
     icon: icon('ic_code'),
   },
-  {
-    title: 'Gestion des Store',
-    path: '/products',
-    icon: icon('ic_cart'),
-  },
 ];
 
 export default navConfig;

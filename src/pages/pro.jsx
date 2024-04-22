@@ -8,7 +8,7 @@ export default function ProPage() {
   return (
     <>
       <Helmet>
-        <title> professionnels </title>
+        <title> Professionnels </title>
       </Helmet>
 
       <ProView />

@@ -7,8 +7,78 @@ class Api {
       const  res = await axios.post(`${base}/admin/login`,admin);
        return res.data;
     }
+
+    // /****************API Users-Admin *****************/
+    
+    // get all admins
+    async getAllAdmins() {
+      const  res = await axios.get(`${base}/admins`);
+      return res.data;
+    }
+
+    // Update profile info --name && email
+    async ModifierUser(user,id) {
+      const formData = new FormData();
+      if(user.name)
+          formData.append("name", user.name);
+      if(user.email)
+          formData.append("email", user.email);
+         
+      const res = await axios.post(`${base}/admin/update/${id}`,formData)
+          return res.data;
+    }
+
+    // Update profile info -- password
+    async ModifierMDP(user,id) {
+      const formData = new FormData();
+      formData.append("oldPassword", user.oldPassword);
+      formData.append("password", user.password);
+         
+      const res = await axios.post(`${base}/admin/updatePassword/${id}`,formData)
+          return res.data;
+    }
+    
+    // added new  admin 
+    async AjouterUser(user) {
+      const formData = new FormData();
+        formData.append("name", user.name);
+        formData.append("email", user.email);
+        formData.append("password", user.password);
+        
+      const res = await axios.post(`${base}/admin/register`,formData)
+          return res.data;
+    }
+    
+    // Update admin  user info
+    async ModifierAdmin(user,id) {
+      const formData = new FormData();
+      if(user.name)
+          formData.append("name", user.name);
+      if(user.email)
+          formData.append("email", user.email);
+      if(user.password)
+          formData.append("password", user.password);
+      formData.append("updated_at", new Date().toISOString());
+
+      const res = await axios.post(`${base}/admin/updateAdmin/${id}`,formData)
+          return res.data;
+    }
+
+    // delete an  admin
+    async SupprimerAdmin(id) {
+      const  res = await axios.post(`${base}/admin/delete/${id}`);
+      return res.data;
+    }
+
+    // delete admins
+    async SupprimerAdmins(ids) {
+      const  res = await axios.post(`${base}/admin/delete/${ids}`);
+      return res.data;
+    }
    
     // /****************API Users-particulars *****************/
+
+    // get all particulars 
     async getAllParticular() {
       const  res = await axios.get(`${base}/particulars`);
       return res.data;
@@ -49,7 +119,7 @@ class Api {
           formData.append("image", user.image);
       formData.append("updated_at", new Date().toISOString());
 
-      const res = await axios.post(`${base}/particulars/${id}`,formData
+      const res = await axios.post(`${base}/particular/${id}`,formData
       , {
         headers: {
           "Content-Type": "multipart/form-data"
@@ -65,7 +135,14 @@ class Api {
       return res.data;
     }
 
+    // get all subscribed particulars 
+    async getSubscribedParticulars() {
+      const  res = await axios.get(`${base}/particulars/subscribed`);
+      return res.data;
+    }
+
     // /****************API Users-professionals *****************/
+    // get all proffessional 
     async getAllProfessional() {
       const  res = await axios.get(`${base}/professionals`);
       return res.data;
@@ -124,7 +201,7 @@ class Api {
           formData.append("image", user.image);
       formData.append("updated_at", new Date().toISOString());
 
-      const res = await axios.post(`${base}/pros/${id}`,formData
+      const res = await axios.post(`${base}/pro/${id}`,formData
       , {
         headers: {
           "Content-Type": "multipart/form-data"
@@ -140,102 +217,78 @@ class Api {
       return res.data;
     }
 
-    // /****************API Users-Admin *****************/
-    
-    // get all admins
-    async getAllAdmins() {
-      const  res = await axios.get(`${base}/admins`);
+    // get all subscribed proffessionals 
+    async getSubscribedprofessionals() {
+      const  res = await axios.get(`${base}/professionals/subscribed`);
       return res.data;
     }
 
-    // Update admin  user info
-    async ModifierUser(user,id) {
-      const formData = new FormData();
-      if(user.name)
-          formData.append("name", user.name);
-      if(user.email)
-          formData.append("email", user.email);
-         
-      const res = await axios.post(`${base}/admin/update/${id}`,formData)
-          return res.data;
+    // get all subscribed proffessionals 
+    async getStoresStatistics() {
+      const  res = await axios.get(`${base}/professionals/stores`);
+        return res.data;
     }
 
-    // Update profile info
-    async ModifierMDP(user,id) {
-      const formData = new FormData();
-      formData.append("oldPassword", user.oldPassword);
-      formData.append("password", user.password);
-         
-      const res = await axios.post(`${base}/admin/updatePassword/${id}`,formData)
-          return res.data;
+    // get all subscribed proffessionals 
+    async getOffresStatistics() {
+      const  res = await axios.get(`${base}/professionals/offres`);
+        return res.data;
     }
-    
-    // added new  admin 
-    async AjouterUser(user) {
+
+    // get top visited  stores 
+    async getTopVisitedStores() {
+      const  res = await axios.get(`${base}/professionals/top-stores`);
+      return res.data;
+    }
+
+    // get all subscribed proffessionals 
+    async getTopRecommendedCompanies() {
+      const  res = await axios.get(`${base}/professionals/top-recommended`);
+      return res.data;
+    }
+
+    // /****************API Promo-code *****************/
+    // get all promo codes 
+    async getAllPromoCode() {
+      const  res = await axios.get(`${base}/promo-codes`);
+      return res.data;
+    }
+
+    // added new  promo code 
+    async AjouterCodePromo(CPromo) {
       const formData = new FormData();
-        formData.append("name", user.name);
-        formData.append("email", user.email);
-        formData.append("password", user.password);
+        formData.append("code", CPromo.code);
+        formData.append("price", CPromo.price);
+        formData.append("for_pro", CPromo.for_pro);
         
-      const res = await axios.post(`${base}/admin/register`,formData)
-          return res.data;
+      const res = await axios.post(`${base}/promo-code`,formData);
+      return res.data;
     }
-    
-    // Update admin  user info
-    async ModifierAdmin(user,id) {
+
+    // Update  promo code
+    async ModifierCodePromo(CPromo,id) {
       const formData = new FormData();
-      if(user.name)
-          formData.append("name", user.name);
-      if(user.email)
-          formData.append("email", user.email);
-      if(user.password)
-          formData.append("password", user.password);
+      if(CPromo.code)
+          formData.append("code", CPromo.code);
+      if(CPromo.price)
+          formData.append("price", CPromo.price);
+      if(CPromo.for_pro)
+          formData.append("for_pro", CPromo.for_pro);
+     
       formData.append("updated_at", new Date().toISOString());
 
-      const res = await axios.post(`${base}/admin/updateAdmin/${id}`,formData)
-          return res.data;
-    }
-
-    // supprimer un admin
-    async SupprimerAdmin(id) {
-      const  res = await axios.post(`${base}/admin/delete/${id}`);
+      const res = await axios.post(`${base}/promo-code/update/${id}`,formData)
       return res.data;
     }
 
-    // supprimer des admin
-    async SupprimerAdmins(ids) {
-      const  res = await axios.post(`${base}/admin/delete/${ids}`);
+    // delete a proffessional
+    async SupprimerCodePromo(id) {
+      const  res = await axios.post(`${base}/promo-code/delete/${id}`);
       return res.data;
     }
-           
 
-    //          async AjoutOrga(organisateur) {
-              
-    //            const res = await axios.post(`${base}/signup`,organisateur);
-    //             return res.data;
-    //             }
-    //             async AjoutImage(user,id) {
-    //               const formData = new FormData();
-    //               formData.append("image", user.image);
-    //               const res = await axios.post(`${base}/updateUserImage/${id}`,formData
-    //               , {
-    //               headers: {
-    //                       "Content-Type": "multipart/form-data"
-    //                     }
-    //                   }
-    //                   );
-    //                 return res.data;
-    //               }
-               
-        
-    //       async SupprimerUser(id) {
-    //         const res = await axios.delete(`${base}/user/${id}`);
-    //             return res.data;
-    //             }
-              
-    //     UrlImage =()=>{
-    //     return images;
-    //     }
+    // /****************API statistics *****************/
+    
 }
 const base = import.meta.env.VITE_APP_BACKEND_API_URL;
 export default Api;
