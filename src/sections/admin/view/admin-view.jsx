@@ -215,13 +215,14 @@ export default function AdminPage() {
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = admins.map((n) => n.id);
-      setSelected(newSelecteds);
+      setSelected(()=>(newSelecteds));
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, id) => {
+  const handleClick = (event,id) => {
+    event.preventDefault();
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
     if (selectedIndex === -1) {
@@ -319,9 +320,9 @@ export default function AdminPage() {
                 }}
                 value={name}
                 onChange={(event) =>{ setName(event.target.value)}} 
-                error={errors.name}
+                error={!!errors.name}
               />
-              <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.name}>{errors.name}</FormHelperText>
+              <FormHelperText sx={{fontSize:13,mb:1}}  error={!!errors.name}>{errors.name}</FormHelperText>
               
               <TextField
                 required
@@ -342,9 +343,9 @@ export default function AdminPage() {
             
                 value={email}
                 onChange={(event) =>{ setEmail(event.target.value)}} 
-                error={errors.email}
+                error={!!errors.email}
               />
-              <FormHelperText sx={{fontSize:13, mb:1}}  error={errors.email}>{errors.email}</FormHelperText>
+              <FormHelperText sx={{fontSize:13, mb:1}}  error={!!errors.email}>{errors.email}</FormHelperText>
               
               <TextField
                 required
@@ -364,7 +365,7 @@ export default function AdminPage() {
                 }}
                 value={password}
                 onChange={(event) =>{ setPassword(event.target.value)}} 
-                error={errors.password}
+                error={!!errors.password}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="start">
@@ -379,7 +380,7 @@ export default function AdminPage() {
                   ),
                 }}
               />
-              <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.password}>{errors.password}</FormHelperText>
+              <FormHelperText sx={{fontSize:13,mb:1}}  error={!!errors.password}>{errors.password}</FormHelperText>
 
               <TextField
                 required
@@ -399,7 +400,7 @@ export default function AdminPage() {
                 }}
                 value={cpassword}
                 onChange={(event) =>{ setCPassword(event.target.value)}} 
-                error={errors.cpassword}
+                error={!!errors.cpassword}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="start">
@@ -414,7 +415,7 @@ export default function AdminPage() {
                   ),
                 }}
               />
-              <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.cpassword}>{errors.cpassword}</FormHelperText>
+              <FormHelperText sx={{fontSize:13,mb:1}}  error={!!errors.cpassword}>{errors.cpassword}</FormHelperText>
           </Box>
         </DialogContent>
         <DialogActions sx={{justifyContent:'end', display: 'flex', flexWrap: 'wrap'}}>
@@ -430,9 +431,11 @@ export default function AdminPage() {
       {/* table */}
       <Card>
         <UserTableToolbar
-          numSelected={selected.length}
+          selected={selected}
+          setSelected={setSelected}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          getAllAdmins={getAllAdmins}
         />
 
         <Scrollbar>

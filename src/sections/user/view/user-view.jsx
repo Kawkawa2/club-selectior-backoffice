@@ -519,9 +519,11 @@ export default function UserPage() {
       {/* table */}
       <Card>
         <UserTableToolbar
-          numSelected={selected.length}
+          selected={selected}
+          setSelected={setSelected}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          getAllParticulars={getAllParticulars}
         />
 
         <Scrollbar>

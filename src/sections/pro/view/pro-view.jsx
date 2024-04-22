@@ -710,9 +710,11 @@ export default function ProPage() {
       {/* table */}
       <Card>
         <ProTableToolbar
-          numSelected={selected.length}
+          selected={selected}
+          setSelected={setSelected}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          getAllProfessional={getAllProfessional}
         />
 
         <Scrollbar>

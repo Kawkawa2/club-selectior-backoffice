@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
+import { useMemo, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -23,7 +23,12 @@ import DialogActions from '@mui/material/DialogActions';
 import InputAdornment from '@mui/material/InputAdornment';
 import DialogContentText from '@mui/material/DialogContentText';
 
+import { useRouter } from 'src/routes/hooks';
+
+import { removeUser } from 'src/utils/helper';
+
 import Api from 'src/services/api';
+import { account } from 'src/_mock/account';
 
 import Iconify from 'src/components/iconify';
 
@@ -48,6 +53,10 @@ export default function UserTableRow({
   getAllAdmins
 }) 
 {
+  const api = useMemo(() => new Api(), []);
+  const router =  useRouter();
+  const [flag,setFlag]=useState(false);
+
   // the hooks
   const [open, setOpen] = useState(null);
   const [openUpdateDialog, setUpdateDialog] = useState(false);
@@ -160,7 +169,6 @@ export default function UserTableRow({
 
   // handle form submit 1 -- name && email && password
   const handleSubmit1 = async (event) => {
-      const api = new Api();
       event.preventDefault();
       const admin = {
         name:Name,
@@ -208,7 +216,6 @@ export default function UserTableRow({
 
   // handle form submit 2 -- delete admin
   const handleSubmit2 = async (event) => {
-      const api = new Api();
       event.preventDefault();
       api.SupprimerAdmin(id).then(response => {
         if (response.status === true) {
@@ -226,6 +233,12 @@ export default function UserTableRow({
           handleCloseDelete();
           handleCloseMenu();
           getAllAdmins();
+          if(flag){
+            console.log('flag inside',flag)
+            // Remove the user from local storage
+            removeUser('user');
+            router.reload();
+          }
         }
       })
       .catch(err=> {
@@ -243,6 +256,12 @@ export default function UserTableRow({
       });
   } 
 
+  useEffect(()=>{
+    if(id===account.id)
+    {
+      setFlag(true);
+    }
+},[id])
 
   return (
     <>
@@ -335,9 +354,9 @@ export default function UserTableRow({
                   }}
                   value={Name}
                   onChange={(event) =>{ setName(event.target.value)}} 
-                  error={errors.name}
+                  error={!!errors.name}
                 />
-                <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.name}>{errors.name}</FormHelperText>
+                <FormHelperText sx={{fontSize:13,mb:1}}  error={!!errors.name}>{errors.name}</FormHelperText>
                 
                 <TextField
                   required
@@ -358,9 +377,9 @@ export default function UserTableRow({
               
                   value={Email}
                   onChange={(event) =>{ setEmail(event.target.value)}} 
-                  error={errors.email}
+                  error={!!errors.email}
                 />
-                <FormHelperText sx={{fontSize:13, mb:1}}  error={errors.email}>{errors.email}</FormHelperText>
+                <FormHelperText sx={{fontSize:13, mb:1}}  error={!!errors.email}>{errors.email}</FormHelperText>
                 
                 <TextField
                   required
@@ -380,7 +399,7 @@ export default function UserTableRow({
                   }}
                   value={password}
                   onChange={(event) =>{ setPassword(event.target.value)}} 
-                  error={errors.password}
+                  error={!!errors.password}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="start">
@@ -395,7 +414,7 @@ export default function UserTableRow({
                     ),
                   }}
                 />
-                <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.password}>{errors.password}</FormHelperText>
+                <FormHelperText sx={{fontSize:13,mb:1}}  error={!!errors.password}>{errors.password}</FormHelperText>
 
                 <TextField
                   required
@@ -415,7 +434,7 @@ export default function UserTableRow({
                   }}
                   value={cpassword}
                   onChange={(event) =>{ setCPassword(event.target.value)}} 
-                  error={errors.cpassword}
+                  error={!!errors.cpassword}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="start">
@@ -430,7 +449,7 @@ export default function UserTableRow({
                     ),
                   }}
                 />
-                <FormHelperText sx={{fontSize:13,mb:1}}  error={errors.cpassword}>{errors.cpassword}</FormHelperText>
+                <FormHelperText sx={{fontSize:13,mb:1}}  error={!!errors.cpassword}>{errors.cpassword}</FormHelperText>
             </Box>
           </DialogContent>
 

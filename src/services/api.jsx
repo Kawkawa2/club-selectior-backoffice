@@ -70,9 +70,9 @@ class Api {
       return res.data;
     }
 
-    // delete admins
+    // delete an array of  admins
     async SupprimerAdmins(ids) {
-      const  res = await axios.post(`${base}/admin/delete/${ids}`);
+      const  res = await axios.post(`${base}/admins/delete`,ids);
       return res.data;
     }
    
@@ -132,6 +132,12 @@ class Api {
     // delete a particular
     async SupprimerParticulier(id) {
       const  res = await axios.post(`${base}/particular/delete/${id}`);
+      return res.data;
+    }
+
+    // delete an array of particulars 
+    async SupprimerParticuliers(ids){
+      const  res = await axios.post(`${base}/particulars/delete`,ids);
       return res.data;
     }
 
@@ -217,6 +223,12 @@ class Api {
       return res.data;
     }
 
+    // delete an array of proffessional 
+    async SupprimerProfessionnels(ids){
+      const  res = await axios.post(`${base}/pros/delete`,ids);
+      return res.data;
+    }
+
     // get all subscribed proffessionals 
     async getSubscribedprofessionals() {
       const  res = await axios.get(`${base}/professionals/subscribed`);
@@ -281,9 +293,15 @@ class Api {
       return res.data;
     }
 
-    // delete a proffessional
+    // delete a promo code
     async SupprimerCodePromo(id) {
       const  res = await axios.post(`${base}/promo-code/delete/${id}`);
+      return res.data;
+    }
+
+    // delete an array of promo code 
+    async SupprimerCodesPromo(ids){
+      const  res = await axios.post(`${base}/promo-codes/delete`,ids);
       return res.data;
     }
 

@@ -356,9 +356,11 @@ export default function PromoCodePage() {
       {/* table */}
       <Card>
         <PromoCodeTableToolbar
-          numSelected={selected.length}
+          selected={selected}
+          setSelected={setSelected}
           filterName={filterName}
           onFilterName={handleFilterByName}
+          getAllPromoCode={getAllPromoCode}
         />
 
         <Scrollbar>

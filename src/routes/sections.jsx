@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes  } from 'react-router-dom';
 
 import { getUser } from 'src/utils/helper';
@@ -19,12 +19,8 @@ const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 export default function Router() {
   // check if the user is authenticated or not
-  const [isAuthenticated,setIsAuthenticated]= useState()
-  useEffect(()=>{
-    const user = getUser('user'); // Fetch user from localStorage or wherever you store user data
-    setIsAuthenticated(user !== null);
-
-  },[])
+  const user = getUser('user'); // Fetch user from localStorage or wherever you store user data
+ const isAuthenticated= (user !== null);
   
   const AuthenticatedRoute = ({ element, ...props }) => isAuthenticated ? element : <Navigate to="/login" replace />;
   
@@ -39,11 +35,6 @@ export default function Router() {
   };
   
   const routes = useRoutes([
-    // how t make the login is the first page to display?
-    {
-      path: 'login',
-      element: <UnauthenticatedRoute element={<LoginPage />} />,
-    },
     {
       element: (
         <DashboardLayout>
@@ -60,6 +51,10 @@ export default function Router() {
         { path: 'profil', element: <AuthenticatedRoute element={<ProfilePage />} /> },
         { path: 'code-promo', element: <AuthenticatedRoute element={<PromoCodePage />} /> },
       ],
+    },
+    {
+      path: 'login',
+      element: <UnauthenticatedRoute element={<LoginPage />} />,
     },
     {
       path: '404',
