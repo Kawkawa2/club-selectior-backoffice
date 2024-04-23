@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -12,15 +12,17 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
-import {FormHelperText } from '@mui/material';
 import TableCell from '@mui/material/TableCell';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
 import DialogTitle from '@mui/material/DialogTitle';
+import {FormLabel,FormHelperText } from '@mui/material';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText';
+
+// import { useRouter } from 'src/routes/hooks';
 
 import Api from 'src/services/api';
 
@@ -40,6 +42,8 @@ export default function PromoCodeTableRow({
   code,
   price,
   forPro,
+  startDate,
+  endDate,
   created_at,
   updated_at,
   selected,
@@ -47,7 +51,7 @@ export default function PromoCodeTableRow({
   getAllPromoCode
 }) 
 {
-
+  // const router= useRouter()
   const [open, setOpen] = useState(null);
   const [openUpdateDialog, setUpdateDialog] = useState(false);
   const [openDeleteDialog, setDeleteDialog] = useState(false);
@@ -55,10 +59,16 @@ export default function PromoCodeTableRow({
   const [Code, setCode] = useState(code);
   const [Price, setPrice] = useState(price);
   const [ForPro, setForPro] = useState(forPro);
+  const [status, setStatus] = useState('Disponible');
+  const [StartDate, setStartDate] = useState('');
+  const [EndDate, setEndDate] = useState('');
   const [errors, setErrors]=useState({
     code:'',
     price:'',
     forPro:'',
+    startDate:'',
+    endDate:'',
+
   });
 
   // handle dialog menu
@@ -89,32 +99,67 @@ export default function PromoCodeTableRow({
     setOpen(null)
   };
 
+  // function that check the status of a  coupon
+  const CheckPromoCodeStatus=useCallback(()=>{
+    // Convert endDate string to Date object
+    const currentDate = new Date().toISOString().slice(0, 10); // Current date in YYYY-MM-DD format
+    
+    // Check if endDate is less than currentDate
+    if (endDate < currentDate) {
+      setStatus('Expiré');
+    } else {
+      setStatus('Disponible');
+    }
+    
+  },[endDate])
+
 
   // delete the data 
   const freeData=()=>{
     setCode(code);
     setPrice(price);
     setForPro(forPro);
+    setStartDate('');
+    setEndDate('');
+
     setErrors({});
   }
+  // Handle change in the forPro field
+  const handleChangeForPro = (event) => {
+    const newValue = Number(event.target.value);
+    setForPro(newValue);  
+  };
+
   // handlw validation for  form
   function validateForm() {
     let valid = true;
     let newErrors = {};
   
-    // validate the numSiret field
+    // validate the code field
     if (!Code.trim() || !code) {
       newErrors = { ...newErrors, code: "Veuillez entrer le code promo" };
       valid = false;
     }
   
-    // validate the postalCode field type (only numbers allowed)
+    // validate the price field type (only numbers allowed)
     if (!Price || !price) {
       newErrors = { ...newErrors, price: "Veuillez entrer le prix réduit" };
       valid = false;
     }
     else if(Price && !/^\d+$/.test(Price)) {
       newErrors = { ...newErrors, price: "Le prix doit contenir uniquement des chiffres" };
+      valid = false;
+    }
+
+    // validate the start date field type
+    if (StartDate && !EndDate) {
+      newErrors = { ...newErrors, endDate: "Veuillez entrer la date de fin" };
+      valid = false;
+    }
+    
+    // validate the start date field type
+    if (EndDate && !StartDate) {
+      newErrors = { ...newErrors, startDate: "Veuillez entrer la date de  début" };
       valid = false;
     }
     
@@ -136,7 +181,10 @@ export default function PromoCodeTableRow({
         'code': Code,
         'price':Price,
         'for_pro':ForPro,
+        'start_date':StartDate,
+        'end_date':EndDate
       } 
+      console.log('e',promo_code)
       if (validateForm()){ 
         api.ModifierCodePromo(promo_code,id).then(response => {
             if (response.status === true) {
@@ -151,7 +199,7 @@ export default function PromoCodeTableRow({
                   progress: undefined,
                 }
               );
-              // freeData();
+              freeData();
               handleClose();
               handleCloseMenu();
               getAllPromoCode()
@@ -159,6 +207,8 @@ export default function PromoCodeTableRow({
               
             } else if(response.code){
               setErrors({code: response?.code})
+            }else if(response.startDate){
+              setErrors({startDate: response?.startDate})
             }
           })
           .catch(err=> {
@@ -216,6 +266,10 @@ export default function PromoCodeTableRow({
       });
   } 
 
+  useEffect(()=>{
+    CheckPromoCodeStatus();
+    
+  },[CheckPromoCodeStatus])
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -227,9 +281,19 @@ export default function PromoCodeTableRow({
         <TableCell>
           {
           forPro?
-          <Chip label="professionnel" size="small" color="primary"/>
+          <Chip label='Professionnel' size="small" color="primary"/>
           :
-          <Chip label="Particulier" size="small" color="warning" />
+          <Chip label='Particulier' size="small" color="warning" />
+          }
+        </TableCell>
+        <TableCell>{startDate}</TableCell>
+        <TableCell>{endDate}</TableCell>
+        <TableCell>
+          {
+            status==='Expiré'?
+            <Chip label={status} size="small" color="error"/>
+            :
+            <Chip label={status} size="small" color="success" />
           }
         </TableCell>
         <TableCell>{created_at}</TableCell>
@@ -300,12 +364,60 @@ export default function PromoCodeTableRow({
                     }
                   }}
                   value={ForPro}
-                  onChange={(event) =>{ setForPro(event.target.value)}} 
+                  onChange={handleChangeForPro} 
                   error={!!errors.forPro}
                 >
                   <MenuItem value={1}>Professionnel</MenuItem>
                   <MenuItem value={0}>Particulier</MenuItem>
               </Select>
+              <FormLabel>
+                <InputLabel sx={{fontSize:14}} id="startDate">Date de début...</InputLabel>
+                <TextField
+                  required
+                  id="startDate"
+                  name="startDate"
+                  type="date"
+                  variant="standard"
+                  size='small'
+                  fullWidth
+                  sx={{
+                    mb:2,
+                    fontSize:13,
+                    label:{
+                      fontSize:14,
+                    }
+                  }}
+                  value={StartDate} // Format the date before setting it to the TextField
+                  onChange={(event) =>{ setStartDate(event.target.value)}} 
+                  error={!!errors.startDate}
+                />
+                <FormHelperText sx={{fontSize:13,mb:1}} error={!!errors.startDate}>{errors.startDate}</FormHelperText>
+              </FormLabel>
+
+              <FormLabel>
+                <InputLabel sx={{fontSize:14}} id="endDate">Date de fin...</InputLabel>
+                <TextField
+                  required
+                  id="endDate"
+                  name="endDate"
+                  type="date"
+                  variant="standard"
+                  size='small'
+                  fullWidth
+                  sx={{
+                    mb:2,
+                    fontSize:13,
+                    label:{
+                      fontSize:14,
+                    }
+                  }}
+                  value={EndDate} // Format the date before setting it to the TextField
+                  onChange={(event) =>{ setEndDate(event.target.value)}} 
+                  error={!!errors.endDate}
+                  
+                />
+                <FormHelperText sx={{fontSize:13,mb:1}} error={!!errors.endDate}>{errors.endDate}</FormHelperText>
+              </FormLabel>
                 
                 <TextField
                   required
@@ -399,6 +511,8 @@ PromoCodeTableRow.propTypes = {
   code: PropTypes.any,
   price: PropTypes.any,
   forPro: PropTypes.any,
+  startDate: PropTypes.any,
+  endDate: PropTypes.any,
   created_at: PropTypes.any,
   updated_at: PropTypes.any,
   handleClick: PropTypes.func,

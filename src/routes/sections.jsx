@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { Outlet, Navigate, useRoutes  } from 'react-router-dom';
 
 import { getUser } from 'src/utils/helper';
@@ -19,16 +19,22 @@ const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 export default function Router() {
   // check if the user is authenticated or not
-  const user = getUser('user'); // Fetch user from localStorage or wherever you store user data
- const isAuthenticated= (user !== null);
   
-  const AuthenticatedRoute = ({ element, ...props }) => isAuthenticated ? element : <Navigate to="/login" replace />;
+  const [user,setUser] = useState(); // Fetch user from localStorage or wherever you store user data
+  
+  const isAuthenticated =(user !== null)
+  
+  useEffect(()=>{
+    setUser(getUser('user'))
+  },[user])
+  
+  const AuthenticatedRoute = ({ element }) => isAuthenticated ? element : <Navigate to="/login" />;
   
   AuthenticatedRoute.propTypes = {
     element: PropTypes.element.isRequired,
   };
   
-  const UnauthenticatedRoute = ({ element, ...props }) => isAuthenticated ? <Navigate to="/" replace /> : element;
+  const UnauthenticatedRoute = ({ element}) => isAuthenticated ? <Navigate to="/"/> : element;
   
   UnauthenticatedRoute.propTypes = {
     element: PropTypes.element.isRequired,

@@ -9,7 +9,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
-import {FormHelperText } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
@@ -20,6 +19,7 @@ import InputLabel from '@mui/material/InputLabel';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import {FormLabel, FormHelperText } from '@mui/material';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
@@ -65,17 +65,23 @@ export default function PromoCodePage() {
   const [code, setCode] = useState('');
   const [price, setPrice] = useState('');
   const [forPro, setForPro] = useState(0);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
   const [errors, setErrors]=useState({
     code:'',
     price:'',
     forPro:'',
-    
+    startDate:'',
+    endDate:'',    
   });
 
   const freeData=()=>{
     setCode('');
     setPrice('');
     setForPro(0);
+    setStartDate('');
+    setEndDate('');
     setErrors({});
   }
 
@@ -91,22 +97,33 @@ export default function PromoCodePage() {
     let valid = true;
     let newErrors = {};
   
-    // validate the numSiret field
+    // validate the code field
     if (!code.trim()) {
       newErrors = { ...newErrors, code: "Veuillez entrer le code promo" };
       valid = false;
     }
   
-    // validate the postalCode field type (only numbers allowed)
-    if (!price.trim()) {
+    // validate the price field type (only numbers allowed)
+    if (!price) {
       newErrors = { ...newErrors, price: "Veuillez entrer le prix réduit" };
       valid = false;
     }
-    else if(price.trim() && !/^\d+$/.test(price.trim())) {
+    else if(price && !/^\d+$/.test(price)) {
       newErrors = { ...newErrors, price: "Le prix doit contenir uniquement des chiffres" };
       valid = false;
     }
-  
+
+    // validate the start date field
+    if (!startDate) {
+      newErrors = { ...newErrors, startDate: "Veuillez entrer la date de  début" };
+      valid = false;
+    }
+
+    // validate the start date field
+    if (!endDate) {
+      newErrors = { ...newErrors, endDate: "Veuillez entrer la date de fin" };
+      valid = false;
+    }
   
     // Update errors state only if new errors are found
     if (Object.keys(newErrors).length > 0) {
@@ -117,7 +134,7 @@ export default function PromoCodePage() {
     }
     return valid;
   }
-  
+
   // handle form submit 1 -- name && email 
   const handleSubmit1 = async (event) => {
       const api = new Api();
@@ -126,7 +143,10 @@ export default function PromoCodePage() {
         code,
         price,
         'for_pro':forPro,
+        'start_date':startDate, 
+        'end_date': endDate, 
       } 
+      console.log('c',promo_code)
       if (validateForm()){ 
         api.AjouterCodePromo(promo_code).then(response => {
             if (response.status === true) {
@@ -146,6 +166,8 @@ export default function PromoCodePage() {
               handleClose();
             } else if(response.code){
               setErrors({code: response?.code})
+            }else if(response.startDate){
+              setErrors({startDate: response?.startDate})
             }
           })
           .catch(err=> {
@@ -230,7 +252,6 @@ export default function PromoCodePage() {
     filterName,
   });
 
-
   const notFound = !dataFiltered.length && !!filterName;
 
   useEffect(() => {
@@ -272,31 +293,84 @@ export default function PromoCodePage() {
         <DialogContent dividers sx={{width: {sm:400} , minWidth:200}} >
           <Box component='form' 
             sx={{  my: {sm:'auto', xs:1}, mx:{sm:'auto', xs:1}}} > 
-              <InputLabel sx={{fontSize:14}} id="forPro">Type de bénéficiaire...</InputLabel>
-              <Select
-                required
-                labelId="forPro"
-                id="forPro"
-                value={forPro}
-                name='forPro'
-                variant="standard"
-                size='small'
-                label="Type de bénéficiaire..."
-                fullWidth
-                sx={{
-                  mb:2,
-                  fontSize:13,
-                  label:{
-                    fontSize:14,
-                  }
-                }}
-                onChange={(event) =>{ setForPro(event.target.value)}} 
-                error={!!errors.forPro}
-              >
-                <MenuItem value={1}>Professionnel</MenuItem>
-                <MenuItem value={0}>Particulier</MenuItem>
-            </Select>
-              
+              <FormLabel>
+                <InputLabel sx={{fontSize:14}} id="forPro">Type de bénéficiaire...</InputLabel>
+                <Select
+                  required
+                  labelId="forPro"
+                  id="forPro"
+                  value={forPro}
+                  name='forPro'
+                  variant="standard"
+                  size='small'
+                  label="Type de bénéficiaire..."
+                  fullWidth
+                  sx={{
+                    mb:4,
+                    fontSize:13,
+                    label:{
+                      fontSize:14,
+                    }
+                  }}
+                  onChange={(event) =>{ setForPro(event.target.value)}} 
+                  error={!!errors.forPro}
+                >
+                  <MenuItem value={1}>Professionnel</MenuItem>
+                  <MenuItem value={0}>Particulier</MenuItem>
+                </Select>
+              </FormLabel>
+
+              <FormLabel>
+                <InputLabel sx={{fontSize:14}} id="startDate">Date de début...</InputLabel>
+                <TextField
+                  required
+                  id="startDate"
+                  name="startDate"
+                  type="date"
+                  variant="standard"
+                  size='small'
+                  fullWidth
+                  sx={{
+                    mb:2,
+                    fontSize:13,
+                    label:{
+                      fontSize:14,
+                    }
+                  }}
+                  value={startDate} // Format the date before setting it to the TextField
+                  onChange={(event) =>{ setStartDate(event.target.value)}} 
+                  error={!!errors.startDate}
+                  
+                  
+                />
+                <FormHelperText sx={{fontSize:13,mb:1}} error={!!errors.startDate}>{errors.startDate}</FormHelperText>
+              </FormLabel>
+
+              <FormLabel>
+                <InputLabel sx={{fontSize:14}} id="endDate">Date de fin...</InputLabel>
+                <TextField
+                  required
+                  id="endDate"
+                  name="endDate"
+                  type="date"
+                  variant="standard"
+                  size='small'
+                  fullWidth
+                  sx={{
+                    mb:2,
+                    fontSize:13,
+                    label:{
+                      fontSize:14,
+                    }
+                  }}
+                  value={endDate} // Format the date before setting it to the TextField
+                  onChange={(event) =>{ setEndDate(event.target.value)}} 
+                  error={!!errors.endDate}
+                  
+                />
+                <FormHelperText sx={{fontSize:13,mb:1}} error={!!errors.endDate}>{errors.endDate}</FormHelperText>
+              </FormLabel>
+
               <TextField
                 required
                 id="code"
@@ -377,6 +451,9 @@ export default function PromoCodePage() {
                   { id: 'code', label: 'Code' },
                   { id: 'price', label: 'Prix' },
                   { id: 'for_pro', label: 'Type de Bénéficiaire' },
+                  { id: 'start_date', label: 'Date de début' },
+                  { id: 'end_date', label: 'Date de fin' },
+                  { id: 'status', label: 'Etat' },
                   { id: 'created_at', label: 'Créé à' },
                   { id: 'updated_at', label: 'Modifié à' },
                   { id: 'action', label: 'Action' },
@@ -393,6 +470,8 @@ export default function PromoCodePage() {
                       code={row.code}
                       price={row.price}
                       forPro={row.for_pro}
+                      startDate={row.start_date}
+                      endDate={row.end_date}
                       created_at={row.created_at}
                       updated_at={row.updated_at}
                       selected={selected.indexOf(row.id) !== -1}

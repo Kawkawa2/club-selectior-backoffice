@@ -272,6 +272,8 @@ class Api {
         formData.append("code", CPromo.code);
         formData.append("price", CPromo.price);
         formData.append("for_pro", CPromo.for_pro);
+        formData.append("start_date", CPromo.start_date);
+        formData.append("end_date", CPromo.end_date);
         
       const res = await axios.post(`${base}/promo-code`,formData);
       return res.data;
@@ -286,6 +288,10 @@ class Api {
           formData.append("price", CPromo.price);
       if(CPromo.for_pro)
           formData.append("for_pro", CPromo.for_pro);
+      if(CPromo.start_date)
+          formData.append("start_date", CPromo.start_date);
+      if(CPromo.end_date)
+          formData.append("end_date", CPromo.end_date);
      
       formData.append("updated_at", new Date().toISOString());
 

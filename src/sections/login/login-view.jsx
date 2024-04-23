@@ -61,7 +61,6 @@ export default function LoginView() {
    if (validateForm()){ 
       api.Login(admin).then(response => {
           if (response.status === true) {
-            console.log(response.user) 
             setUser(JSON.stringify(response?.user));
             router.reload();
 
