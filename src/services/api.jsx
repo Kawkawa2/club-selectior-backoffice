@@ -170,7 +170,7 @@ class Api {
         if(user.image)
           formData.append("image", user.image);
         
-      const res = await axios.post(`${base}/pro/register`,formData
+      const res = await axios.post(`${base}/pro/registerForDash`,formData
         , {
         headers: {
           "Content-Type": "multipart/form-data"

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Input from '@mui/material/Input';
 import Avatar from '@mui/material/Avatar';
@@ -48,6 +49,7 @@ export default function UserTableRow({
   first_name,
   last_name,
   email,
+  status,
   created_at,
   updated_at,
   handleClick,
@@ -61,6 +63,7 @@ export default function UserTableRow({
   const [open, setOpen] = useState(null);
   const [openUpdateDialog, setUpdateDialog] = useState(false);
   const [openDeleteDialog, setDeleteDialog] = useState(false);
+
 
   const [fname, setFName] = useState(first_name);
   const [lname, setLName] = useState(last_name);
@@ -102,7 +105,7 @@ export default function UserTableRow({
     freeData()
   }
 
-  // function that handle  dialog that delete admin
+  // function that handle  dialog that delete particular
   const handleClickOpenDelete = () => {
     setDeleteDialog(true);
   };
@@ -110,6 +113,7 @@ export default function UserTableRow({
     setDeleteDialog(false);
     setOpen(null)
   };
+
 
 
   // handle toggle  show password icon
@@ -297,7 +301,17 @@ export default function UserTableRow({
 
         <TableCell>{last_name}</TableCell>
 
-        <TableCell>{email}</TableCell>
+        <TableCell >
+          <a href={`mailto:${email}`} style={{textDecoration:'none'}}>{email}</a>
+        </TableCell>
+        <TableCell>
+          {
+          status?
+          <Chip label='Abonné(e)' size="small" color="info"/>
+          :
+          <Chip label='Non Abonné(e)' size="small" color="error" />
+          }  
+        </TableCell>
         <TableCell>{created_at}</TableCell>
         <TableCell>{updated_at}</TableCell>
 
@@ -559,7 +573,7 @@ export default function UserTableRow({
           </DialogTitle>
           <DialogContent sx={{width: {sm:400} , minWidth:200}}>
             <DialogContentText id="alert-dialog-description">
-              Est ce que vous êtes sûr de vouloir supprimer cet administrateur? Cette opération est irréversible!
+              Est ce que vous êtes sûr de vouloir supprimer cet Prticulier? Cette opération est irréversible!
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -567,6 +581,8 @@ export default function UserTableRow({
             <Button onClick={handleSubmit2} color='warning'>Supprimer</Button>
           </DialogActions>
         </Dialog>
+
+        
       </Popover>
     </>
   );
@@ -579,6 +595,7 @@ UserTableRow.propTypes = {
   handleClick: PropTypes.func,
   getAllParticulars: PropTypes.func,
   last_name: PropTypes.any,
+  status: PropTypes.any,
   email: PropTypes.any,
   created_at: PropTypes.any,
   updated_at: PropTypes.any,

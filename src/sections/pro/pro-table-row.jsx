@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Input from '@mui/material/Input';
 import Avatar from '@mui/material/Avatar';
@@ -46,6 +47,7 @@ export default function UserTableRow({
   company_name,
   email,
   phone,
+  status,
   city,
   country,
   postal_code,
@@ -101,7 +103,7 @@ export default function UserTableRow({
     setOpen(null);
   };
 
-  // function that handle  dialog that update admin
+  // function that handle  dialog that update Pro
   const handleClickOpenUpdate = () => {
     setUpdateDialog(true);
   };
@@ -111,7 +113,7 @@ export default function UserTableRow({
     freeData()
   };
 
-  // function that handle  dialog that delete admin
+  // function that handle  dialog that delete Pro
   const handleClickOpenDelete = () => {
     setDeleteDialog(true);
   };
@@ -294,7 +296,7 @@ export default function UserTableRow({
      } 
   }
 
-  // handle form submit 2 -- delete admin
+  // handle form submit 2 -- delete Pro
   const handleSubmit2 = async (event) => {
       const api = new Api();
       event.preventDefault();
@@ -354,8 +356,19 @@ export default function UserTableRow({
         </TableCell>
 
 
-        <TableCell>{email}</TableCell>
+        <TableCell >
+          <a href={`mailto:${email}`} style={{textDecoration:'none'}}>{email}</a>
+        </TableCell>
         <TableCell>{phone}</TableCell>
+        <TableCell>
+          {
+          status?
+          <Chip label='Abonné(e)' size="small" color="info"/>
+          :
+          <Chip label='Non Abonné(e)' size="small" color="error" />
+          }  
+        </TableCell>
+
         <TableCell>{city}</TableCell>
         <TableCell>{country}</TableCell>
         <TableCell>{postal_code}</TableCell>
@@ -751,7 +764,7 @@ export default function UserTableRow({
           </DialogTitle>
           <DialogContent sx={{width: {sm:400} , minWidth:200}}>
             <DialogContentText id="alert-dialog-description">
-              Est ce que vous êtes sûr de vouloir supprimer cet administrateur? Cette opération est irréversible!
+              Est ce que vous êtes sûr de vouloir supprimer cet Professionnel? Cette opération est irréversible!
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -773,6 +786,7 @@ UserTableRow.propTypes = {
   phone: PropTypes.any,
   city: PropTypes.any,
   country: PropTypes.any,
+  status: PropTypes.any,
   postal_code: PropTypes.any,
   adr_p: PropTypes.any,
   adr_c: PropTypes.any,

@@ -732,6 +732,7 @@ export default function ProPage() {
                   { id: 'company_name', label: 'Nom de l\'entreprise' },
                   { id: 'email', label: 'Email' },
                   { id: 'phone', label: 'Téléphone' },
+                  { id: 'abonnement', label: 'Abonnement' },
                   { id: 'city', label: 'Ville' },
                   { id: 'country', label: 'Pays' },
                   { id: 'postal_code', label: 'Code Postal' },
@@ -754,6 +755,7 @@ export default function ProPage() {
                       company_name={row.company_name}
                       email={row.email}
                       phone={row.phone}
+                      status={row.subscription}
                       city={row.city}
                       country={row.country}
                       postal_code={row.postal_code}

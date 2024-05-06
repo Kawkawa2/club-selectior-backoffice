@@ -283,7 +283,9 @@ export default function UserTableRow({
         </TableCell>
 
 
-        <TableCell>{email}</TableCell>
+        <TableCell >
+          <a href={`mailto:${email}`} style={{textDecoration:'none'}}>{email}</a>
+        </TableCell>
         <TableCell>{created_at}</TableCell>
         <TableCell>{updated_at}</TableCell>
 

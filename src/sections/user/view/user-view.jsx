@@ -219,8 +219,12 @@ export default function UserPage() {
   const getAllParticulars = useCallback(() => {
     const api = new Api();
     
-    api.getAllParticular().then((res) => {
+    api.getAllParticular()
+    .then((res) => {
       setUsers(res);
+    })
+    .catch((err)=>{
+      console.log('error intern du serveur',err);
     });
     
   }, []); // Empty dependency array since there are no dependencies
@@ -286,8 +290,7 @@ export default function UserPage() {
 
   useEffect(() => {
 
-    getAllParticulars(); // This will run only once when the component mounts
-    
+    getAllParticulars(); // This will run only once when the component mounts    
   }, [getAllParticulars]); // Add getAllParticulars to the dependency array to ensure useEffect is re-triggered when getAllParticulars changes
 
   return (
@@ -540,6 +543,7 @@ export default function UserPage() {
                   { id: 'first_name', label: 'Prénom' },
                   { id: 'last_name', label: 'Nom' },
                   { id: 'email', label: 'Email' },
+                  { id: 'abonnement', label: 'Abonnement' },
                   { id: 'created_at', label: 'Créé à' },
                   { id: 'updated_at', label: 'Modifié à' },
                   { id: 'action', label: 'Action' },
@@ -557,6 +561,7 @@ export default function UserPage() {
                       first_name={row.first_name}
                       last_name={row.last_name}
                       email={row.email}
+                      status={row.subscription}
                       created_at={row.created_at}
                       updated_at={row.updated_at}
                       selected={selected.indexOf(row.id) !== -1}
