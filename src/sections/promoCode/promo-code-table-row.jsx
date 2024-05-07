@@ -493,7 +493,7 @@ export default function PromoCodeTableRow({
           </DialogTitle>
           <DialogContent sx={{width: {sm:400} , minWidth:200}}>
             <DialogContentText id="alert-dialog-description">
-              Est ce que vous êtes sûr de vouloir supprimer cet administrateur? Cette opération est irréversible!
+              Est ce que vous êtes sûr de vouloir supprimer cet code promo? Cette opération est irréversible!
             </DialogContentText>
           </DialogContent>
           <DialogActions>

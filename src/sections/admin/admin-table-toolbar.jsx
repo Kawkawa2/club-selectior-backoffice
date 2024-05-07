@@ -2,12 +2,18 @@ import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { useMemo, useState, useEffect } from 'react';
 
+import Dialog from '@mui/material/Dialog';
+import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import InputAdornment from '@mui/material/InputAdornment';
+import DialogContentText from '@mui/material/DialogContentText';
 
 import { useRouter } from 'src/routes/hooks';
 
@@ -23,13 +29,22 @@ import Iconify from 'src/components/iconify';
 export default function UserTableToolbar({ selected, setSelected,filterName, onFilterName, getAllAdmins }) {
   const api = useMemo(() => new Api(), []);
   const router =  useRouter();
+
+  const [openDeletesDialog, setDeletesDialog] = useState(false);
   const [flag,setFlag]=useState(false);
+
+  // function that handle  dialog that delete pro
+  const handleClickOpenDeletes= () => {
+    setDeletesDialog(true);
+  };
+  const handleCloseDeletes = () => {
+    setDeletesDialog(false);
+  };
+
   // handle form submit -- delete admins
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(account.id, flag);
     
-  
     // If the selected array does not contain the current user's ID, proceed with deleting the selected admins
     api.SupprimerAdmins(selected).then((response) => {
       if (response.status === true) {
@@ -111,11 +126,35 @@ export default function UserTableToolbar({ selected, setSelected,filterName, onF
 
       {/* display the delete all icon button */}
       {selected.length > 0 ? (
+        <>
         <Tooltip title="Delete">
-          <IconButton onClick={handleSubmit}  sx={{ color: 'error.main' }}>
+          <IconButton onClick={handleClickOpenDeletes}  sx={{ color: 'error.main' }}>
             <Iconify icon="eva:trash-2-fill" />
           </IconButton>
         </Tooltip>
+        
+        {/* modal for deleting many Administrateurs */}
+        <Dialog
+          open={openDeletesDialog}
+          onClose={handleCloseDeletes}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Supprimer des Administrateurs
+          </DialogTitle>
+          <DialogContent sx={{width: {sm:400} , minWidth:200}}>
+            <DialogContentText id="alert-dialog-description">
+              Est ce que vous êtes sûr de vouloir supprimer ces Administrateurs? Cette opération est irréversible!
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDeletes} color='inherit'>Annuler</Button>
+            <Button onClick={handleSubmit} color='warning'>Supprimer</Button>
+          </DialogActions>
+        </Dialog>
+        
+        </>
       ) : (
         null
       )}

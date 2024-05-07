@@ -48,7 +48,6 @@ export default function AdminPage() {
 
   const [page, setPage] = useState(0);
   const [admins, setAdmins] = useState([]);
-
   const [order, setOrder] = useState('asc');
 
   const [selected, setSelected] = useState([]);

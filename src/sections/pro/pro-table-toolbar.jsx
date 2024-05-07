@@ -26,14 +26,14 @@ export default function UserTableToolbar({ selected, setSelected, filterName, on
   const [openDeletesDialog, setDeletesDialog] = useState(false);
 
   
-  // function that handle  dialog that delete admin
+  // function that handle  dialog that delete pro
   const handleClickOpenDeletes= () => {
     setDeletesDialog(true);
   };
   const handleCloseDeletes = () => {
     setDeletesDialog(false);
   };
-  // handle form submit -- delete admins
+  // handle form submit -- delete pros
   const handleSubmit = async (event) => {
     event.preventDefault();
 
