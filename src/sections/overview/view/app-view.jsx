@@ -16,8 +16,8 @@ export default function AppView() {
   const api = useMemo(() => new Api(), []);
 
   // hooks
-  const [parsCount, setParsCount] = useState({total_particulars:0, total_subscribed_particulars:0});
-  const [prosCount, setProsCount] = useState({total_pros:0, total_subscribed_pros:0, total_stores:0,total_offres:0});
+  const [parsCount, setParsCount] = useState({total_particulars:0, total_test_subscribed_particulars:0,total_subscribed_particulars:0});
+  const [prosCount, setProsCount] = useState({total_pros:0, total_subscribed_pros:0,total_test_pros:0, total_stores:0,total_offres:0});
   const [topStoresCount, setTopStoresCount] = useState([]);
   const [recoMax, setRecoMax] = useState([]);
 
@@ -31,6 +31,7 @@ export default function AppView() {
       setProsCount((statistics) => ({
         ...statistics,
         total_pros: res.statistics.total_pros,
+        total_test_pros: res.statistics.total_test_subscribed_pros,
         total_subscribed_pros: res.statistics.total_subscribed_pros,
 
       }));
@@ -88,8 +89,8 @@ export default function AppView() {
         {/* statics sumarry */}
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Particuliers abonnés"
-            total={`${parseInt(parsCount.total_subscribed_particulars, 10)  }/${  parseInt(parsCount.total_particulars, 10)}`} 
+            title="Particuliers abonnés - test"
+            total={`(${parseInt(parsCount.total_subscribed_particulars, 10)  }-${  parseInt(parsCount.total_test_subscribed_particulars, 10)})/${  parseInt(parsCount.total_particulars, 10)}`} 
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
@@ -97,8 +98,8 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Professionnels abonnés"
-            total={`${parseInt(prosCount.total_subscribed_pros, 10)  }/${  parseInt(prosCount.total_pros, 10)}`} 
+            title="Professionnels abonnés - test"
+            total={`(${parseInt(prosCount.total_subscribed_pros, 10)  }-${  parseInt(prosCount.total_test_pros, 10)})/${  parseInt(prosCount.total_pros, 10)}`} 
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
           />

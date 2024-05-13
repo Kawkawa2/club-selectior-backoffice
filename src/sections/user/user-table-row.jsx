@@ -83,6 +83,19 @@ export default function UserTableRow({
     cpassword:'',
   });
 
+  let chipLabel;
+  let chipColor;
+
+  if (status === 'abonnement') {
+    chipLabel = 'Abonné(e)';
+    chipColor = 'info';
+  } else if (status === 'test') {
+    chipLabel = 'Test';
+    chipColor = 'secondary';
+  } else {
+    chipLabel = 'Non Abonné(e)';
+    chipColor = 'error';
+  }
   // handle dialog menu
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -305,12 +318,7 @@ export default function UserTableRow({
           <a href={`mailto:${email}`} style={{textDecoration:'none'}}>{email}</a>
         </TableCell>
         <TableCell>
-          {
-          status?
-          <Chip label='Abonné(e)' size="small" color="info"/>
-          :
-          <Chip label='Non Abonné(e)' size="small" color="error" />
-          }  
+          <Chip label={chipLabel} size="small" color={chipColor} />
         </TableCell>
         <TableCell>{created_at}</TableCell>
         <TableCell>{updated_at}</TableCell>

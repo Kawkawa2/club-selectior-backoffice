@@ -755,7 +755,7 @@ export default function ProPage() {
                       company_name={row.company_name}
                       email={row.email}
                       phone={row.phone}
-                      status={row.subscription}
+                      status={row.subscription_type}
                       city={row.city}
                       country={row.country}
                       postal_code={row.postal_code}

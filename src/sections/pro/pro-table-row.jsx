@@ -94,6 +94,20 @@ export default function UserTableRow({
     adrP:'',
     adrC:'',
   });
+  let chipLabel;
+  let chipColor;
+
+  if (status === 'abonnement') {
+    chipLabel = 'Abonné(e)';
+    chipColor = 'info';
+  } else if (status === 'test') {
+    chipLabel = 'Test';
+    chipColor = 'secondary';
+  } else {
+    chipLabel = 'Non Abonné(e)';
+    chipColor = 'error';
+  }
+
   // handle dialog menu
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -361,12 +375,7 @@ export default function UserTableRow({
         </TableCell>
         <TableCell>{phone}</TableCell>
         <TableCell>
-          {
-          status?
-          <Chip label='Abonné(e)' size="small" color="info"/>
-          :
-          <Chip label='Non Abonné(e)' size="small" color="error" />
-          }  
+          <Chip label={chipLabel} size="small" color={chipColor} />
         </TableCell>
 
         <TableCell>{city}</TableCell>

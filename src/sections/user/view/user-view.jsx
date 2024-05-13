@@ -561,7 +561,7 @@ export default function UserPage() {
                       first_name={row.first_name}
                       last_name={row.last_name}
                       email={row.email}
-                      status={row.subscription}
+                      status={row.subscription_type}
                       created_at={row.created_at}
                       updated_at={row.updated_at}
                       selected={selected.indexOf(row.id) !== -1}
