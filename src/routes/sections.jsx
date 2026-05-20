@@ -20,13 +20,13 @@ const Page404 = lazy(() => import('src/pages/page-not-found'));
 export default function Router() {
   // check if the user is authenticated or not
   
-  const [user,setUser] = useState(); // Fetch user from localStorage or wherever you store user data
-  
-  const isAuthenticated =(user !== null)
-  
-  useEffect(()=>{
-    setUser(getUser('user'))
-  },[user])
+  const [storedUser, setStoredUser] = useState(null);
+
+  const isAuthenticated = Boolean(storedUser);
+
+  useEffect(() => {
+    setStoredUser(getUser());
+  }, []);
   
   const AuthenticatedRoute = ({ element }) => isAuthenticated ? element : <Navigate to="/login" />;
   

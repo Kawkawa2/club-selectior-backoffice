@@ -1,4 +1,7 @@
 /* scrollbar */
 @import 'simplebar-react/dist/simplebar.min.css';
 
-
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

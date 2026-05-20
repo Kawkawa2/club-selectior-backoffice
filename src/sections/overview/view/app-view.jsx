@@ -1,5 +1,6 @@
 import { useMemo, useState,useEffect, useCallback  } from 'react';
 
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
@@ -80,9 +81,14 @@ export default function AppView() {
   }, [getSubscribedParticulars, getSubscribedprofessionals,getTopVisitedStores,getTopRecommendedCompanies]); 
   return (
     <Container maxWidth="xl">
-      <Typography variant="h4" sx={{ mb: 5 }}>
-        Salut, Bienvenue à nouveau. 👋
-      </Typography>
+      <Box sx={{ mb: 5 }}>
+        <Typography variant="h4" sx={{ mb: 0.5 }}>
+          Salut, Bienvenue à nouveau 👋
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          Voici un aperçu de l&apos;activité sur Club Selectior
+        </Typography>
+      </Box>
 
       <Grid container spacing={3}>
 
@@ -92,7 +98,7 @@ export default function AppView() {
             title="Particuliers abonnés - test"
             total={`(${parseInt(parsCount.total_subscribed_particulars, 10)  }-${  parseInt(parsCount.total_test_subscribed_particulars, 10)})/${  parseInt(parsCount.total_particulars, 10)}`} 
             color="success"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
+            icon="solar:users-group-rounded-bold"
           />
         </Grid>
 
@@ -101,7 +107,7 @@ export default function AppView() {
             title="Professionnels abonnés - test"
             total={`(${parseInt(prosCount.total_subscribed_pros, 10)  }-${  parseInt(prosCount.total_test_pros, 10)})/${  parseInt(prosCount.total_pros, 10)}`} 
             color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            icon="solar:shop-2-bold"
           />
         </Grid>
 
@@ -110,7 +116,7 @@ export default function AppView() {
             title="Nombre de Store"
             total={prosCount.total_stores}
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
+            icon="solar:bag-4-bold"
           />
         </Grid>
 
@@ -119,7 +125,7 @@ export default function AppView() {
             title="Nombre d'offres"
             total={prosCount.total_offres}
             color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
+            icon="solar:ticket-sale-bold"
           />
         </Grid>
 

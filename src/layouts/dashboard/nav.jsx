@@ -44,19 +44,34 @@ export default function Nav({ openNav, onCloseNav }) {
         my: 3,
         mx: 2.5,
         py: 2,
-        px: 1,
+        px: 2,
         display: 'flex',
-        borderRadius: 1.5,
+        borderRadius: 2,
         alignItems: 'center',
-        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+        bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
+        border: (t) => `1px solid ${alpha(t.palette.primary.main, 0.16)}`,
+        transition: (t) => t.transitions.create(['background-color']),
+        '&:hover': {
+          bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
+        },
       }}
     >
-      <Avatar src={account.photoURL} alt="photoURL" />
+      <Avatar
+        src={account.photoURL}
+        alt={account.displayName}
+        sx={{
+          width: 44,
+          height: 44,
+          border: (t) => `2px solid ${t.palette.background.paper}`,
+        }}
+      />
 
-      <Box sx={{ ml: 2, textDecoration:'none' }} component={Link} to="/profil">
-        <Typography variant="subtitle2">{account?.displayName}</Typography>
+      <Box sx={{ ml: 2, textDecoration: 'none', minWidth: 0 }} component={Link} to="/profil">
+        <Typography variant="subtitle2" noWrap>
+          {account?.displayName}
+        </Typography>
 
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+        <Typography variant="caption" sx={{ color: 'text.secondary' }} noWrap>
           {account?.email}
         </Typography>
       </Box>
@@ -153,9 +168,14 @@ function NavItem({ item }) {
         ...(active && {
           color: 'primary.main',
           fontWeight: 'fontWeightSemiBold',
-          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+          bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
           '&:hover': {
-            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
+            bgcolor: (t) => alpha(t.palette.primary.main, 0.16),
+          },
+        }),
+        ...(!active && {
+          '&:hover': {
+            bgcolor: (t) => alpha(t.palette.grey[500], 0.08),
           },
         }),
       }}

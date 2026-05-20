@@ -29,6 +29,7 @@ import { removeUser } from 'src/utils/helper';
 
 import Api from 'src/services/api';
 import { account } from 'src/_mock/account';
+import { ADMIN_PHOTO_URL } from 'src/_mock/demo-data';
 
 import Iconify from 'src/components/iconify';
 
@@ -273,8 +274,14 @@ export default function UserTableRow({
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-            <FormLabel component='a' href='/assets/images/avatars/avatar_25.jpg' target="_blank">
-              <Avatar alt='image admin' src='/assets/images/avatars/avatar_25.jpg' />
+            <FormLabel component="div">
+              <Avatar
+                alt={name}
+                src={id === 1 ? ADMIN_PHOTO_URL : undefined}
+                sx={{ bgcolor: 'primary.main' }}
+              >
+                {name?.charAt(0).toUpperCase()}
+              </Avatar>
             </FormLabel>
             <Typography variant="subtitle2" noWrap>
               {name}

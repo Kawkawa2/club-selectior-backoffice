@@ -4,8 +4,8 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
+import { alpha, useTheme } from '@mui/material/styles';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
@@ -45,6 +45,7 @@ export default function Header({ onOpenNav }) {
         boxShadow: 'none',
         height: HEADER.H_MOBILE,
         zIndex: theme.zIndex.appBar + 1,
+        borderBottom: (t) => `1px solid ${alpha(t.palette.grey[500], 0.12)}`,
         ...bgBlur({
           color: theme.palette.background.default,
         }),

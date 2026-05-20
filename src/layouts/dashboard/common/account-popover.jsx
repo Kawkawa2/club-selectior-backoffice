@@ -39,9 +39,8 @@ export default function AccountPopover() {
     setOpen(event.currentTarget);
   };
   const handleLogout = () => {
-    removeUser('user');
+    removeUser();
     router.reload();
-    
   };
 
   const handleClose = () => {

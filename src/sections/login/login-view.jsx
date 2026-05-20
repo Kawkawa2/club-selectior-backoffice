@@ -118,10 +118,10 @@ export default function LoginView() {
             size="large"
             type="submit"
             variant="contained"
-            style={{backgroundColor:'#31B3BB'}}
+            color="primary"
             onClick={handleLogin}
           >
-            Login
+            Se connecter
           </LoadingButton>
         </>
     );
@@ -130,21 +130,24 @@ export default function LoginView() {
     <Box
       sx={{
         ...bgGradient({
-          color: alpha(theme.palette.background.default, 0.9),
-          imgUrl: '/assets/background/overlay_4.jpg',
+          color: alpha(theme.palette.primary.main, 0.08),
+          imgUrl: '/assets/background/overlay_1.svg',
         }),
         height: 1,
+        bgcolor: 'background.default',
       }}
     >
-      <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
+      <Stack alignItems="center" justifyContent="center" sx={{ height: 1, px: 2 }}>
         <Card
           sx={{
-            p:5,
+            p: { xs: 3, sm: 5 },
             width: 1,
             maxWidth: 420,
+            borderRadius: 3,
+            boxShadow: (t) => t.customShadows.z24,
           }}
-        >          
-           <Logo/>
+        >
+          <Logo />
           {renderForm}
         </Card>
       </Stack>

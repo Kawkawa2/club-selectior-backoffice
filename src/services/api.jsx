@@ -1,7 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import axios from 'axios';
 
-class Api {
+import MockApi from './mockApi';
+
+class RealApi {
     // /****************Login *****************/
     async Login(admin) {
       const  res = await axios.post(`${base}/admin/login`,admin);
@@ -315,4 +317,5 @@ class Api {
     
 }
 const base = import.meta.env.VITE_APP_BACKEND_API_URL;
-export default Api;
+
+export default import.meta.env.VITE_USE_MOCK === 'true' ? MockApi : RealApi;

@@ -1,20 +1,19 @@
 
-const KEY = "user";
+const KEY = 'user';
+
 function setUser(token) {
-   console.log("Userrr Conect",token)
-   localStorage.setItem(KEY, token);
+  localStorage.setItem(KEY, token);
 }
 
 function getUser() {
   return localStorage.getItem(KEY);
 }
 
-function isAdmin(){
-    if(getUser()){
-       console.log(getUser());
-        return JSON.parse(getUser()).user.role === "admin";
-    }
-    return false;
+function isAdmin() {
+  if (getUser()) {
+    return JSON.parse(getUser()).user.role === 'admin';
+  }
+  return false;
 }
 function removeUser() {
   localStorage.removeItem(KEY);

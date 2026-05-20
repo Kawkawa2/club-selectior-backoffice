@@ -4,29 +4,58 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
+
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export default function AppWidgetSummary({ title, total, icon, color = 'primary', sx, ...other }) {
+  const theme = useTheme();
+
   return (
     <Card
       component={Stack}
-      spacing={3}
+      spacing={2.5}
       direction="row"
+      alignItems="center"
       sx={{
         px: 3,
-        py: 5,
+        py: 3,
         borderRadius: 2,
+        transition: theme.transitions.create(['box-shadow', 'transform'], {
+          duration: theme.transitions.duration.shorter,
+        }),
+        '&:hover': {
+          transform: 'translateY(-3px)',
+          boxShadow: theme.customShadows.z8,
+        },
         ...sx,
       }}
       {...other}
     >
-      {icon && <Box sx={{ width: 64, height: 64 }}>{icon}</Box>}
+      <Box
+        sx={{
+          width: 64,
+          height: 64,
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 2,
+          color: `${color}.dark`,
+          bgcolor: (t) => alpha(t.palette[color].main, 0.12),
+        }}
+      >
+        {typeof icon === 'string' ? <Iconify icon={icon} width={32} /> : icon}
+      </Box>
 
-      <Stack spacing={0.5}>
-        <Typography variant="h4">{total}</Typography>
+      <Stack spacing={0.5} sx={{ minWidth: 0 }}>
+        <Typography variant="h4" noWrap>
+          {total}
+        </Typography>
 
-        <Typography variant="subtitle2" sx={{ color: 'text.disabled' }}>
+        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
           {title}
         </Typography>
       </Stack>
@@ -39,5 +68,5 @@ AppWidgetSummary.propTypes = {
   icon: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
   sx: PropTypes.object,
   title: PropTypes.string,
-  total: PropTypes.number,
+  total: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
