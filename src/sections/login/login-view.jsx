@@ -4,11 +4,11 @@ import { toast } from 'react-toastify';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
 import {FormHelperText }  from '@mui/material';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
@@ -16,15 +16,12 @@ import { useRouter } from 'src/routes/hooks';
 import { setUser } from 'src/utils/helper';
 
 import Api  from 'src/services/api';
-import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
-  const theme = useTheme();
-
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -129,12 +126,11 @@ export default function LoginView() {
   return (
     <Box
       sx={{
-        ...bgGradient({
-          color: alpha(theme.palette.primary.main, 0.08),
-          imgUrl: '/assets/background/overlay_1.svg',
-        }),
         height: 1,
         bgcolor: 'background.default',
+        backgroundImage: (t) =>
+          `radial-gradient(circle at 20% 20%, ${alpha(t.palette.primary.lighter, 0.9)} 0%, transparent 45%),
+           radial-gradient(circle at 80% 80%, ${alpha(t.palette.primary.light, 0.25)} 0%, transparent 40%)`,
       }}
     >
       <Stack alignItems="center" justifyContent="center" sx={{ height: 1, px: 2 }}>
